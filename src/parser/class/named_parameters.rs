@@ -5,12 +5,24 @@ use nom::{
 
 use crate::parser::{annotation::{annotations0, Annotation}, identifier::{identifier, Identifier}, keyword::required_keyword, utils::comma_separated0, whitespace::wsc};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct NamedParameter {
     pub annotations: Vec<Annotation>,
     pub required: bool,
     pub parameter_type: Identifier,
     pub name: Identifier,
+}
+
+impl NamedParameter {
+    pub fn default_annotation(&self) -> Option<String> {
+        self.annotations.iter().find_map(|annotation| {
+            if annotation.name.name == "Default" {
+                Some(annotation.parameters.clone())
+            } else {
+                None
+            }
+        })
+    }
 }
 
 pub fn named_parameter<'a>(input: &'a str) -> IResult<&'a str, NamedParameter> {

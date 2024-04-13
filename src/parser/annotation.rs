@@ -5,7 +5,7 @@ use nom::{
 
 use super::{identifier::{identifier, Identifier}, literal::{string_literal, string_literal_str}, whitespace::{some_whitespace, wsc, LINE_COMMENT_END, LINE_COMMENT_START, MULTI_LINE_COMMENT_END, MULTI_LINE_COMMENT_START}};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Annotation {
     pub name: Identifier,
     pub parameters: String,

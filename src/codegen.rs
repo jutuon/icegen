@@ -4,8 +4,12 @@ use anyhow::Result;
 
 use crate::{file_finder::DartFile, parser::{ClassDefinition, ParsedFile, TopLevelItems}};
 
+use self::data_class::ValidatedClass;
+
 mod wrong_constructor_exception;
 mod part_of;
+mod data_class;
+mod utils;
 
 pub const GENERATED_FILE_HEADER: &str = "//
 // AUTOMATICALLY GENERATED CODE
@@ -57,5 +61,11 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
 }
 
 fn generate_data_class(file: &DartFile, class: &ClassDefinition, editor: &mut StringEditor) -> Result<()> {
+    let validated = ValidatedClass::validate(class)?;
+
+    editor.add_paragraph(data_class::mixin::generate_mixin(&validated)?);
+    editor.add_paragraph(data_class::abstract_class::generate_abstract_class(&validated)?);
+    editor.add_paragraph(data_class::impl_class::generate_impl_class(&validated)?);
+
     Ok(())
 }

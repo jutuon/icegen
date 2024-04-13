@@ -1,4 +1,6 @@
 
+use core::fmt;
+
 use nom::{
     branch::alt,
     bytes::complete::{is_not, tag, take_till, take_until, take_until1, take_while, take_while1},
@@ -8,9 +10,15 @@ use nom::{
     IResult
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Identifier {
     pub name: String,
+}
+
+impl fmt::Display for Identifier {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.name)
+    }
 }
 
 pub fn identifier(input: &str) -> IResult<&str, Identifier> {

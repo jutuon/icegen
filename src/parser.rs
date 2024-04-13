@@ -3,7 +3,7 @@
 use nom::{branch::alt, bytes::complete::take, multi::many0, IResult, Parser};
 use anyhow::Result;
 
-use self::{class::{class, ClassDefinition}, import::{import_statement, ImportStatement}, utils::item_parser, whitespace::wsc};
+use self::{class::{class}, import::{import_statement}, utils::item_parser, whitespace::wsc};
 
 mod whitespace;
 mod keyword;
@@ -14,15 +14,37 @@ mod import;
 mod class;
 mod utils;
 
+pub use self::annotation::Annotation;
+pub use self::identifier::Identifier;
+pub use self::import::ImportStatement;
+pub use self::class::ClassDefinition;
+pub use self::class::items::ClassItemInfo;
+pub use self::class::items::ClassItem;
+pub use self::class::constructor::PrivateConstructor;
+pub use self::class::constructor::FactoryConstructor;
+pub use self::class::named_parameters::NamedParameter;
+
 #[derive(Debug, PartialEq)]
-enum TopLevelItems {
+pub enum TopLevelItems {
     Import(ImportStatement),
     Class(ClassDefinition),
 }
 
 #[derive(Debug, PartialEq)]
 pub struct ParsedFile {
-    items: Vec<TopLevelItems>,
+    pub items: Vec<TopLevelItems>,
+}
+
+impl ParsedFile {
+    pub fn contains_freezed_annotated_class(&self) -> bool {
+        self.items.iter().any(|item| {
+            if let TopLevelItems::Class(class) = item {
+                class.contains_freezed_annotation()
+            } else {
+                false
+            }
+        })
+    }
 }
 
 impl ParsedFile {

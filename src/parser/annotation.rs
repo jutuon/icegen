@@ -11,6 +11,12 @@ pub struct Annotation {
     pub parameters: String,
 }
 
+impl Annotation {
+    pub fn is_freezed_annotation(&self) -> bool {
+        self.name.name == "freezed" || self.name.name == "Freezed"
+    }
+}
+
 pub fn annotation(input: &str) -> IResult<&str, Annotation> {
     let (input, _) = tag("@")(input)?;
     let (input, _) = wsc(input)?;

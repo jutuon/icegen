@@ -9,6 +9,7 @@ use crate::parser::ParsedFile;
 
 const DART_FILE_EXTENSION: &str = ".dart";
 const FREEZED_GENERATED_CODE_FILE_EXTENSION: &str = ".freezed.dart";
+pub const FREEZED_GENERATED_CODE_FILE_EXTENSION_WITHOUT_LEADING_DOT: &str = "freezed.dart";
 
 #[derive(Debug)]
 pub struct DartFile {
@@ -16,6 +17,9 @@ pub struct DartFile {
     pub parsed_file: ParsedFile,
 }
 
+/// Parsed Dart files in a directory and its subdirectories.
+///
+/// This does not contain Dart files ending with `.freezed.dart`.
 #[derive(Debug)]
 pub struct ParsedDartFiles {
     pub code_files: Vec<DartFile>,

@@ -19,6 +19,14 @@ pub struct ClassDefinition {
     pub item_info: ClassItemInfo,
 }
 
+impl ClassDefinition {
+    pub fn contains_freezed_annotation(&self) -> bool {
+        self.annotations.iter().any(|annotation| {
+            annotation.is_freezed_annotation()
+        })
+    }
+}
+
 pub fn class(input: &str) -> IResult<&str, ClassDefinition> {
     let (input, annotations) = annotations0(input)?;
     let (input, _) = wsc(input)?;

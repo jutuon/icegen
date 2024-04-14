@@ -11,12 +11,15 @@ mod part_of;
 mod data_class;
 mod utils;
 
-pub const GENERATED_FILE_HEADER: &str = "//
-// AUTOMATICALLY GENERATED CODE
-//
-// Generated with icegen
-// ---------------------------------------------------------------------
+pub const GENERATED_FILE_HEADER: &str =
+"// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
 ";
+
+pub const GENERATOR_INFO_TEXT: &str =
+"// **************************************************************************
+// Generated with Icegen
+// **************************************************************************";
 
 struct StringEditor {
     content: String,
@@ -67,6 +70,7 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
     let mut editor = StringEditor::new(format!("{}", GENERATED_FILE_HEADER));
 
     editor.add_paragraph(part_of::generate_part_of_statement(file)?);
+    editor.add_paragraph(GENERATOR_INFO_TEXT);
     editor.add_paragraph(
         wrong_constructor_exception::generate_final_variable_for_exception()
     );

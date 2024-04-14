@@ -34,13 +34,13 @@ fn generate_field_params(class: &ValidatedClass) -> String {
 
     for field in &class.factory_constructor_params {
         let default_value = if field.parameter_type.nullable {
-            DEFAULT_DETECTOR_VARIABLE
+            format!(" = {}", DEFAULT_DETECTOR_VARIABLE)
         } else {
-            "null"
+            format!("")
         };
 
         fields.push_str(&format!(
-            "Object? {} = {},\n",
+            "Object? {}{},\n",
             field.name,
             default_value,
         ));

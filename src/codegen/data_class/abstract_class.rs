@@ -14,7 +14,7 @@ pub fn generate_abstract_class(class: &ValidatedClass) -> Result<String> {
 
     let private_constructor = if class.private_constructor_exists {
         format!(
-            "  _{}._() : super._();\n",
+            "\n  _{}._() : super._();",
             class.name,
         )
     } else {
@@ -24,16 +24,13 @@ pub fn generate_abstract_class(class: &ValidatedClass) -> Result<String> {
     let abstract_class = formatdoc!("
         /// @nodoc
         abstract class _{} {} {} {{
-        {}
-        {}
-        {}
+        {}{}
         }}",
         class.name,
         class_modifier,
         class.name,
         indent_lines("  ", generate_abstract_class_factory(class)?),
         private_constructor,
-        indent_lines("  ", generate_abstract_class_overridden_items(class)),
     );
 
     Ok(abstract_class)
@@ -71,19 +68,4 @@ fn generate_abstract_class_field_params(class: &ValidatedClass) -> String {
     }
 
     field_getters
-}
-
-fn generate_abstract_class_overridden_items(class: &ValidatedClass) -> String {
-    let mut items = String::new();
-
-    for field in &class.factory_constructor_params {
-        items.push_str(&formatdoc!("
-            @override
-            {} get {};\n",
-            field.parameter_type,
-            field.name,
-        ));
-    }
-
-    items
 }

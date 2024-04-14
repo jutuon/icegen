@@ -63,7 +63,8 @@ fn const_values_for_field_value_defaults(
         };
 
         code.push_str(&format!(
-            "static const _{}DefaultValue = {};\n",
+            "static const {} _{}DefaultValue = {};\n",
+            field.parameter_type,
             field.name,
             default_value,
         ));

@@ -28,12 +28,13 @@ pub fn generate_impl_class_equality_operator(class: &ValidatedClass) -> String {
         @override
         bool operator ==(Object other) {{
           return identical(this, other) ||
-            (other is _${}Impl &&
+            (other.runtimeType == runtimeType &&
+              other is _${}Impl &&
         {}
           );
         }}",
         class.name,
-        indent_lines("    ", equality_checks),
+        indent_lines("      ", equality_checks),
     );
 
     equality

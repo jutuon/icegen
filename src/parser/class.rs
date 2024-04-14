@@ -63,6 +63,8 @@ pub fn parse_mixin_types(input: &str) -> IResult<&str, Vec<Identifier>> {
 mod tests {
     use tests::constructor::{FactoryConstructor, PrivateConstructor};
 
+    use crate::parser::data_type::DataType;
+
     use self::{items::ClassItem, named_parameters::NamedParameter};
 
     use super::*;
@@ -124,7 +126,10 @@ mod tests {
         NamedParameter {
             annotations: vec![],
             required: false,
-            parameter_type: Identifier { name: class_name.to_string() },
+            parameter_type: DataType {
+                name: Identifier { name: class_name.to_string() },
+                nullable: false,
+            },
             name: Identifier { name: name.to_string() },
         }
     }

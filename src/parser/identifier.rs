@@ -12,7 +12,7 @@ use nom::{
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Identifier {
-    pub name: String,
+    pub(in crate::parser) name: String,
 }
 
 impl fmt::Display for Identifier {

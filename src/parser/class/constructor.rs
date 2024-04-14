@@ -67,7 +67,7 @@ pub fn factory_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResu
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::parser::identifier::Identifier;
+    use crate::parser::{data_type::DataType, identifier::Identifier};
 
     fn identifier(name: &str) -> Identifier {
         Identifier { name: name.to_string() }
@@ -80,7 +80,10 @@ mod tests {
         NamedParameter {
             annotations: vec![],
             required: false,
-            parameter_type: identifier(class_name),
+            parameter_type: DataType {
+                name: identifier(class_name),
+                nullable: false,
+            },
             name: Identifier { name: name.to_string() },
         }
     }

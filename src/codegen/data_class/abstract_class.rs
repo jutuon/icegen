@@ -66,7 +66,7 @@ pub fn generate_abstract_class_field_params(class: &ValidatedClass) -> String {
         field_getters.push_str(&format!(
             "{}{} {},\n",
             required,
-            field.parameter_type.name,
+            field.parameter_type,
             field.name,
         ));
     }
@@ -81,7 +81,7 @@ fn generate_abstract_class_overridden_items(class: &ValidatedClass) -> String {
         items.push_str(&formatdoc!("
             @override
             {} get {};\n",
-            field.parameter_type.name,
+            field.parameter_type,
             field.name,
         ));
     }

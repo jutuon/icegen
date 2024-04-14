@@ -92,7 +92,7 @@ fn generate_impl_class_overridden_items(class: &ValidatedClass) -> String {
         items.push_str(&formatdoc!("
             @override
             final {} {};\n",
-            field.parameter_type.name,
+            field.parameter_type,
             field.name,
         ));
     }

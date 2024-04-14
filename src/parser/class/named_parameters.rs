@@ -3,13 +3,13 @@ use nom::{
     branch::alt, bytes::complete::{is_not, tag, take, take_until, take_while}, character::complete::{multispace0, multispace1}, combinator::{map, not, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult
 };
 
-use crate::parser::{annotation::{annotations0, Annotation}, identifier::{identifier, Identifier}, keyword::required_keyword, utils::comma_separated0, whitespace::wsc};
+use crate::parser::{annotation::{annotations0, Annotation}, data_type::{data_type, DataType}, identifier::{identifier, Identifier}, keyword::required_keyword, utils::comma_separated0, whitespace::wsc};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct NamedParameter {
     pub annotations: Vec<Annotation>,
     pub required: bool,
-    pub parameter_type: Identifier,
+    pub parameter_type: DataType,
     pub name: Identifier,
 }
 
@@ -30,7 +30,7 @@ pub fn named_parameter<'a>(input: &'a str) -> IResult<&'a str, NamedParameter> {
     let (input, _) = wsc(input)?;
     let (input, required) = opt(required_keyword)(input)?;
     let (input, _) = wsc(input)?;
-    let (input, parameter_type) = identifier(input)?;
+    let (input, parameter_type) = data_type(input)?;
     let (input, _) = wsc(input)?;
     let (input, name) = identifier(input)?;
 
@@ -70,7 +70,10 @@ mod tests {
         NamedParameter {
             annotations: vec![],
             required: false,
-            parameter_type: c_name(class_name),
+            parameter_type: DataType {
+                name: c_name(class_name),
+                nullable: false,
+            },
             name: Identifier { name: name.to_string() },
         }
     }
@@ -84,7 +87,10 @@ mod tests {
                 NamedParameter {
                     annotations: vec![a("a"), a("b"), a("c")],
                     required: true,
-                    parameter_type: c_name("A"),
+                    parameter_type: DataType {
+                        name: c_name("A"),
+                        nullable: false,
+                    },
                     name: Identifier { name: "a".to_string() },
                 }
             ))

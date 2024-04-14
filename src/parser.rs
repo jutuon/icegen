@@ -13,6 +13,7 @@ mod annotation;
 mod import;
 mod class;
 mod utils;
+mod data_type;
 
 pub use self::annotation::Annotation;
 pub use self::identifier::Identifier;

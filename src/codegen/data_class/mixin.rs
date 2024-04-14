@@ -11,7 +11,7 @@ fn generate_field_getters_for_mixin(class: &ValidatedClass) -> String {
     for field in &class.factory_constructor_params {
         field_getters.push_str(&format!(
             "  {} get {} => throw {};\n",
-            field.parameter_type.name,
+            field.parameter_type,
             field.name,
             WRONG_CONSTRUCTOR_EXCEPTION_IDENTIFIER,
         ));

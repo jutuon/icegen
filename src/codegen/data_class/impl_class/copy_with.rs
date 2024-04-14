@@ -16,6 +16,7 @@ pub fn generate_detect_default_class_and_constant() -> String {
 
 pub fn generate_impl_class_copy_with(class: &ValidatedClass) -> String {
     formatdoc!("
+        @override
         {} copyWith({{
         {}
         }}) => _${}Impl(

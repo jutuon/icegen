@@ -16,7 +16,7 @@ pub struct NamedParameter {
 impl NamedParameter {
     pub fn default_annotation(&self) -> Option<String> {
         self.annotations.iter().find_map(|annotation| {
-            if annotation.name.name == "Default" {
+            if annotation.is_default_annotation() {
                 Some(annotation.parameters.clone())
             } else {
                 None

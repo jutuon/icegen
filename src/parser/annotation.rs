@@ -15,6 +15,10 @@ impl Annotation {
     pub fn is_freezed_annotation(&self) -> bool {
         self.name.name == "freezed" || self.name.name == "Freezed"
     }
+
+    pub fn is_default_annotation(&self) -> bool {
+        self.name.name == "Default"
+    }
 }
 
 pub fn annotation(input: &str) -> IResult<&str, Annotation> {

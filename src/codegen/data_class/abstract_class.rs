@@ -53,7 +53,7 @@ fn generate_abstract_class_factory(class: &ValidatedClass) -> Result<String> {
     Ok(factory)
 }
 
-pub fn generate_abstract_class_field_params(class: &ValidatedClass) -> String {
+fn generate_abstract_class_field_params(class: &ValidatedClass) -> String {
     let mut field_getters = String::new();
 
     for field in &class.factory_constructor_params {

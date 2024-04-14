@@ -10,6 +10,12 @@ pub struct ImportStatement {
     pub path: String,
 }
 
+impl ImportStatement {
+    pub fn is_flutter_foundation_import(&self) -> bool {
+        self.path == "package:flutter/foundation.dart"
+    }
+}
+
 pub fn import_statement(input: &str) -> IResult<&str, ImportStatement> {
     let (input, _) = import_keyword(input)?;
     let (input, _) = wsc(input)?;

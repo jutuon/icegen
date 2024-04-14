@@ -1,10 +1,9 @@
 use indoc::formatdoc;
 
-use crate::codegen::data_class::ValidatedClass;
+use crate::codegen::{data_class::ValidatedClass, ValidatedFile};
 
-pub fn generate_impl_class_to_string(class: &ValidatedClass) -> String {
+pub fn generate_impl_class_to_string(file: &ValidatedFile, class: &ValidatedClass) -> String {
     let mut fields = String::new();
-
     for field in class.factory_constructor_params.iter() {
         fields.push_str(&format!(
             "{}: ${},",
@@ -14,11 +13,18 @@ pub fn generate_impl_class_to_string(class: &ValidatedClass) -> String {
     }
     fields.pop();
 
+    let to_string_params = if file.flutter_foundation_import_exists {
+        "{DiagnosticLevel minLevel = DiagnosticLevel.info}"
+    } else {
+        ""
+    };
+
     let hash_code = formatdoc!("
         @override
-        String toString() {{
+        String toString({}) {{
           return '{}({})';
         }}",
+        to_string_params,
         class.name,
         fields,
     );

@@ -36,7 +36,34 @@ impl StringEditor {
     }
 }
 
+struct ValidatedFile {
+    pub flutter_foundation_import_exists: bool,
+}
+
+impl ValidatedFile {
+    pub fn validate(parsed_file: &ParsedFile) -> Result<Self> {
+        let mut flutter_foundation_import_exists = false;
+
+        for item in &parsed_file.items {
+            match item {
+                TopLevelItems::Import(import) => {
+                    if import.is_flutter_foundation_import() {
+                        flutter_foundation_import_exists = true;
+                    }
+                }
+                _ => (),
+            }
+        }
+
+        Ok(ValidatedFile {
+            flutter_foundation_import_exists,
+        })
+    }
+}
+
 pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
+    let validated = ValidatedFile::validate(&file.parsed_file)?;
+
     let mut editor = StringEditor::new(format!("{}", GENERATED_FILE_HEADER));
 
     editor.add_paragraph(part_of::generate_part_of_statement(file)?);
@@ -51,7 +78,7 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
                     continue;
                 }
 
-                generate_data_class(file, class, &mut editor)?;
+                generate_data_class(&validated, class, &mut editor)?;
             }
             _ => (),
         }
@@ -60,12 +87,12 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
     Ok(editor.trim_end_and_add_final_newline())
 }
 
-fn generate_data_class(file: &DartFile, class: &ClassDefinition, editor: &mut StringEditor) -> Result<()> {
+fn generate_data_class(file: &ValidatedFile, class: &ClassDefinition, editor: &mut StringEditor) -> Result<()> {
     let validated = ValidatedClass::validate(class)?;
 
     editor.add_paragraph(data_class::mixin::generate_mixin(&validated)?);
     editor.add_paragraph(data_class::abstract_class::generate_abstract_class(&validated)?);
-    editor.add_paragraph(data_class::impl_class::generate_impl_class(&validated)?);
+    editor.add_paragraph(data_class::impl_class::generate_impl_class(file, &validated)?);
 
     Ok(())
 }

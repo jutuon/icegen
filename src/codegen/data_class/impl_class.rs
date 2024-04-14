@@ -17,16 +17,19 @@ mod copy_with;
 pub use copy_with::generate_detect_default_class_and_constant;
 
 pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Result<String> {
+    let abstract_class_name = format!("_{}", class.name);
     let class_modifier = if class.private_constructor_exists {
-        "extends"
+        if file.flutter_foundation_import_exists {
+            format!("extends {} with DiagnosticableTreeMixin", abstract_class_name)
+        } else {
+            format!("extends {}", abstract_class_name)
+        }
     } else {
-        "implements"
-    };
-
-    let diagnosticable_tree_mixin = if file.flutter_foundation_import_exists {
-        " with DiagnosticableTreeMixin"
-    } else {
-        ""
+        if file.flutter_foundation_import_exists {
+            format!("with DiagnosticableTreeMixin implements {}", abstract_class_name)
+        } else {
+            format!("implements {}", abstract_class_name)
+        }
     };
 
     let debug_fill_properties = if file.flutter_foundation_import_exists {
@@ -40,7 +43,7 @@ pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Resu
 
     let impl_class = formatdoc!("
         /// @nodoc
-        class _${}Impl {} _{}{} {{
+        class _${}Impl {} {{
         {}
 
         {}
@@ -55,8 +58,6 @@ pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Resu
         }}",
         class.name,
         class_modifier,
-        class.name,
-        diagnosticable_tree_mixin,
         indent_lines("  ", constructor::generate_impl_class_constructor(class)?),
         indent_lines("  ", fields::generate_impl_class_overridden_fields(class)),
         indent_lines("  ", to_string::generate_impl_class_to_string(file, class)),

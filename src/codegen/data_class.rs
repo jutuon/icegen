@@ -6,7 +6,7 @@ pub mod impl_class;
 use anyhow::{anyhow, Result};
 use indoc::{formatdoc, indoc};
 
-use crate::{codegen::wrong_constructor_exception::WRONG_CONSTRUCTOR_EXCEPTION_IDENTIFIER, file_finder::DartFile, parser::{ClassDefinition, ClassItem, FactoryConstructor, Identifier, NamedParameter, ParsedFile, TopLevelItems}};
+use crate::{file_finder::DartFile, parser::{ClassDefinition, ClassItem, FactoryConstructor, Identifier, NamedParameter, ParsedFile, TopLevelItems}};
 
 pub struct ValidatedClass {
     name: Identifier,

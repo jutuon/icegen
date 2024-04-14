@@ -15,6 +15,12 @@ pub struct Identifier {
     pub(in crate::parser) name: String,
 }
 
+impl Identifier {
+    pub fn as_str(&self) -> &str {
+        &self.name
+    }
+}
+
 impl fmt::Display for Identifier {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.name)

@@ -6,7 +6,6 @@ use crate::{file_finder::DartFile, parser::{ClassDefinition, ParsedFile, TopLeve
 
 use self::data_class::ValidatedClass;
 
-mod wrong_constructor_exception;
 mod part_of;
 mod data_class;
 mod utils;
@@ -71,9 +70,6 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
 
     editor.add_paragraph(part_of::generate_part_of_statement(file)?);
     editor.add_paragraph(GENERATOR_INFO_TEXT);
-    editor.add_paragraph(
-        wrong_constructor_exception::generate_final_variable_for_exception()
-    );
 
     for item in &file.parsed_file.items {
         match item {

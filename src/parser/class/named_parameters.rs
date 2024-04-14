@@ -73,6 +73,7 @@ mod tests {
             parameter_type: DataType {
                 name: c_name(class_name),
                 nullable: false,
+                type_args: vec![],
             },
             name: Identifier { name: name.to_string() },
         }
@@ -90,6 +91,7 @@ mod tests {
                     parameter_type: DataType {
                         name: c_name("A"),
                         nullable: false,
+                        type_args: vec![],
                     },
                     name: Identifier { name: "a".to_string() },
                 }

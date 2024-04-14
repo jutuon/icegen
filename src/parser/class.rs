@@ -129,6 +129,7 @@ mod tests {
             parameter_type: DataType {
                 name: Identifier { name: class_name.to_string() },
                 nullable: false,
+                type_args: vec![],
             },
             name: Identifier { name: name.to_string() },
         }

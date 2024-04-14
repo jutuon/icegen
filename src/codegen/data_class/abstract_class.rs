@@ -26,7 +26,6 @@ pub fn generate_abstract_class(class: &ValidatedClass) -> Result<String> {
         abstract class _{} {} {} {{
         {}
         {}
-
         {}
         }}",
         class.name,

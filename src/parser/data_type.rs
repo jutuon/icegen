@@ -18,6 +18,15 @@ pub struct DataType {
     pub nullable: bool,
 }
 
+impl DataType {
+    pub fn to_nullable(&self) -> DataType {
+        DataType {
+            name: self.name.clone(),
+            nullable: true,
+        }
+    }
+}
+
 impl fmt::Display for DataType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.nullable {

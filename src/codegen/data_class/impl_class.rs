@@ -12,6 +12,9 @@ mod to_string;
 mod equality;
 mod hash_code;
 mod debug_fill_properties;
+mod copy_with;
+
+pub use copy_with::generate_detect_default_class_and_constant;
 
 pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Result<String> {
     let class_modifier = if class.private_constructor_exists {
@@ -47,6 +50,8 @@ pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Resu
         {}
 
         {}
+
+        {}
         }}",
         class.name,
         class_modifier,
@@ -58,6 +63,7 @@ pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Resu
         debug_fill_properties,
         indent_lines("  ", equality::generate_impl_class_equality_operator(class)),
         indent_lines("  ", hash_code::generate_impl_class_hash_code(class)),
+        indent_lines("  ", copy_with::generate_impl_class_copy_with(class)),
     );
 
     Ok(impl_class)

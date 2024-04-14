@@ -70,6 +70,7 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
 
     editor.add_paragraph(part_of::generate_part_of_statement(file)?);
     editor.add_paragraph(GENERATOR_INFO_TEXT);
+    editor.add_paragraph(data_class::impl_class::generate_detect_default_class_and_constant());
 
     for item in &file.parsed_file.items {
         match item {

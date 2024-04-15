@@ -6,11 +6,12 @@ pub fn generate_impl_class_to_string(file: &ValidatedFile, class: &ValidatedClas
     let mut fields = String::new();
     for field in class.factory_constructor_params() {
         fields.push_str(&format!(
-            "{}: ${},",
+            "{}: ${}, ",
             field.name,
             field.name,
         ));
     }
+    fields.pop();
     fields.pop();
 
     let to_string_params = if file.flutter_foundation_import_exists {

@@ -6,6 +6,8 @@ pub mod file_finder;
 pub mod file_writer;
 pub mod parser;
 
+// TODO: Handle collection equality in generated code
+
 fn main() {
     let config = config::get_config();
 

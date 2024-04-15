@@ -16,7 +16,8 @@ pub fn generate_impl_class_constructor(class: &ValidatedClass) -> Result<String>
         ""
     };
 
-    let factory = formatdoc!("
+    let factory = formatdoc!(
+        "
         {}{}_${}Impl({{
         {}
         }}){};",
@@ -34,11 +35,7 @@ fn generate_impl_class_field_params(class: &ValidatedClass) -> String {
     let mut field_getters = String::new();
 
     for field in class.factory_constructor_params() {
-        let required = if field.required {
-            "required "
-        } else {
-            ""
-        };
+        let required = if field.required { "required " } else { "" };
 
         let default_value = if field.default_annotation().is_some() {
             format!(" = _{}DefaultValue", field.name)
@@ -48,18 +45,14 @@ fn generate_impl_class_field_params(class: &ValidatedClass) -> String {
 
         field_getters.push_str(&format!(
             "{}this.{}{},\n",
-            required,
-            field.name,
-            default_value,
+            required, field.name, default_value,
         ));
     }
 
     field_getters
 }
 
-fn const_values_for_field_value_defaults(
-    class: &ValidatedClass,
-) -> String {
+fn const_values_for_field_value_defaults(class: &ValidatedClass) -> String {
     let mut code = String::new();
 
     for field in class.factory_constructor_params() {
@@ -71,9 +64,7 @@ fn const_values_for_field_value_defaults(
 
         code.push_str(&format!(
             "static const {} _{}DefaultValue = {};\n",
-            field.parameter_type,
-            field.name,
-            default_value,
+            field.parameter_type, field.name, default_value,
         ));
     }
 

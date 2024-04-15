@@ -1,6 +1,9 @@
-
 use nom::{
-    branch::alt, bytes::complete::{is_not, tag}, combinator::opt, sequence::delimited, IResult
+    branch::alt,
+    bytes::complete::{is_not, tag},
+    combinator::opt,
+    sequence::delimited,
+    IResult,
 };
 
 pub const SINGLE_QUOTE: &str = "'";
@@ -10,17 +13,11 @@ pub const DOUBLE_QUOTE: &str = "\"";
 //       Support raw strings r"string" and r'string'.
 
 pub fn string_literal(input: &str) -> IResult<&str, String> {
-    string_literal_str(input)
-        .map(
-            |(input, v)| (input, v.to_string())
-        )
+    string_literal_str(input).map(|(input, v)| (input, v.to_string()))
 }
 
 pub fn string_literal_str(input: &str) -> IResult<&str, &str> {
-    alt((
-        double_quote_string,
-        single_quote_string,
-    ))(input)
+    alt((double_quote_string, single_quote_string))(input)
 }
 
 fn double_quote_string(input: &str) -> IResult<&str, &str> {
@@ -34,15 +31,10 @@ fn single_quote_string(input: &str) -> IResult<&str, &str> {
 fn quote_string<'a>(
     quote_character: &str,
     parse_until: impl Fn(&str) -> IResult<&str, &str> + 'a,
-    input: &'a str
+    input: &'a str,
 ) -> IResult<&'a str, &'a str> {
-    let (input, text) = delimited(
-        tag(quote_character),
-        opt(
-            parse_until,
-        ),
-        tag(quote_character),
-    )(input)?;
+    let (input, text) =
+        delimited(tag(quote_character), opt(parse_until), tag(quote_character))(input)?;
     Ok((input, text.unwrap_or_default()))
 }
 
@@ -60,10 +52,7 @@ mod tests {
 
     #[test]
     fn double_quote_string_works() {
-        assert_eq!(
-            double_quote_string("\"a\""),
-            Ok(("", "a"))
-        );
+        assert_eq!(double_quote_string("\"a\""), Ok(("", "a")));
     }
 
     #[test]
@@ -73,10 +62,7 @@ mod tests {
 
     #[test]
     fn single_quote_string_empty_quote_string() {
-        assert_eq!(
-            single_quote_string("''"),
-            Ok(("", ""))
-        );
+        assert_eq!(single_quote_string("''"), Ok(("", "")));
     }
 
     #[test]
@@ -86,10 +72,7 @@ mod tests {
 
     #[test]
     fn single_quote_string_works() {
-        assert_eq!(
-            single_quote_string("'a'"),
-            Ok(("", "a"))
-        );
+        assert_eq!(single_quote_string("'a'"), Ok(("", "a")));
     }
 
     #[test]
@@ -104,10 +87,7 @@ mod tests {
 
     #[test]
     fn is_not_newline_or_single_quote_success_with_allowed_character() {
-        assert_eq!(
-            is_not_newline_or_single_quote("a"),
-            Ok(("", "a"))
-        );
+        assert_eq!(is_not_newline_or_single_quote("a"), Ok(("", "a")));
     }
 
     #[test]
@@ -122,9 +102,6 @@ mod tests {
 
     #[test]
     fn is_not_newline_or_double_quote_success_with_allowed_character() {
-        assert_eq!(
-            is_not_newline_or_double_quote("a"),
-            Ok(("", "a"))
-        );
+        assert_eq!(is_not_newline_or_double_quote("a"), Ok(("", "a")));
     }
 }

@@ -1,5 +1,3 @@
-
-
 pub fn indent_lines(indentation: &str, input: impl AsRef<str>) -> String {
     input
         .as_ref()

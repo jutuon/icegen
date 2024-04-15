@@ -1,9 +1,8 @@
-
-pub mod config;
-pub mod parser;
-pub mod file_finder;
 pub mod codegen;
+pub mod config;
+pub mod file_finder;
 pub mod file_writer;
+pub mod parser;
 
 fn main() {
     let config = config::get_config();

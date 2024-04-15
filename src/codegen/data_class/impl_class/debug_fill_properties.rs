@@ -1,4 +1,3 @@
-
 use indoc::formatdoc;
 
 use crate::codegen::{data_class::ValidatedClass, utils::indent_lines, ValidatedFile};
@@ -12,13 +11,13 @@ pub fn generate_debug_fill_properties(file: &ValidatedFile, class: &ValidatedCla
     for field in class.factory_constructor_params() {
         fields.push_str(&format!(
             "..add(DiagnosticsProperty('{}', {}))\n",
-            field.name,
-            field.name,
+            field.name, field.name,
         ));
     }
     fields.pop();
 
-    let function = formatdoc!("
+    let function = formatdoc!(
+        "
         @override
         void debugFillProperties(DiagnosticPropertiesBuilder properties) {{
           super.debugFillProperties(properties);

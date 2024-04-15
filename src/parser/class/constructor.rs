@@ -1,9 +1,15 @@
-
 use nom::{
-    bytes::{complete::{tag}}, combinator::{opt}, sequence::{delimited, preceded, tuple}, IResult
+    bytes::complete::tag,
+    combinator::opt,
+    sequence::{delimited, preceded, tuple},
+    IResult,
 };
 
-use crate::parser::{identifier::{identifier, Identifier}, keyword::{const_keyword, factory_keyword}, whitespace::wsc};
+use crate::parser::{
+    identifier::{identifier, Identifier},
+    keyword::{const_keyword, factory_keyword},
+    whitespace::wsc,
+};
 
 use super::named_parameters::{named_parameters0, NamedParameter};
 
@@ -13,8 +19,10 @@ pub struct PrivateConstructor {
     pub is_const: bool,
 }
 
-
-pub fn private_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResult<&'a str, PrivateConstructor> {
+pub fn private_constructor<'a>(
+    class_name: &Identifier,
+    input: &'a str,
+) -> IResult<&'a str, PrivateConstructor> {
     let (input, is_const) = opt(const_keyword)(input)?;
     let (input, _) = wsc(input)?;
     let (input, _) = tag(class_name.name.as_bytes())(input)?;
@@ -29,7 +37,12 @@ pub fn private_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResu
     let (input, _) = wsc(input)?;
     let (input, _) = tag(";")(input)?;
 
-    Ok((input, PrivateConstructor { is_const: is_const.is_some() }))
+    Ok((
+        input,
+        PrivateConstructor {
+            is_const: is_const.is_some(),
+        },
+    ))
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -38,8 +51,10 @@ pub struct FactoryConstructor {
     pub is_const: bool,
 }
 
-
-pub fn factory_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResult<&'a str, FactoryConstructor> {
+pub fn factory_constructor<'a>(
+    class_name: &Identifier,
+    input: &'a str,
+) -> IResult<&'a str, FactoryConstructor> {
     let (input, is_const) = opt(const_keyword)(input)?;
     let (input, _) = wsc(input)?;
     let (input, _) = factory_keyword(input)?;
@@ -64,13 +79,14 @@ pub fn factory_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResu
     let (input, _) = wsc(input)?;
     let (input, _) = tag(";")(input)?;
 
-
-    Ok((input, FactoryConstructor {
-        params,
-        is_const: is_const.is_some(),
-    }))
+    Ok((
+        input,
+        FactoryConstructor {
+            params,
+            is_const: is_const.is_some(),
+        },
+    ))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -78,13 +94,12 @@ mod tests {
     use crate::parser::{data_type::DataType, identifier::Identifier};
 
     fn identifier(name: &str) -> Identifier {
-        Identifier { name: name.to_string() }
+        Identifier {
+            name: name.to_string(),
+        }
     }
 
-    fn named_parameter(
-        class_name: &str,
-        name: &str
-    ) -> NamedParameter {
+    fn named_parameter(class_name: &str, name: &str) -> NamedParameter {
         NamedParameter {
             annotations: vec![],
             required: false,
@@ -93,7 +108,9 @@ mod tests {
                 nullable: false,
                 type_args: vec![],
             },
-            name: Identifier { name: name.to_string() },
+            name: Identifier {
+                name: name.to_string(),
+            },
         }
     }
 
@@ -118,10 +135,7 @@ mod tests {
     #[test]
     fn private_constructor_parsed_correctly() {
         assert_eq!(
-            private_constructor(
-                &identifier("A"),
-                "A . _ ( ) ; ",
-            ),
+            private_constructor(&identifier("A"), "A . _ ( ) ; ",),
             Ok((" ", p(false)))
         );
     }
@@ -129,10 +143,7 @@ mod tests {
     #[test]
     fn private_constructor_with_const_parsed_correctly() {
         assert_eq!(
-            private_constructor(
-                &identifier("A"),
-                "const A . _ ( ) ; ",
-            ),
+            private_constructor(&identifier("A"), "const A . _ ( ) ; ",),
             Ok((" ", p(true)))
         );
     }
@@ -140,44 +151,26 @@ mod tests {
     #[test]
     fn factory_constructor_no_params() {
         assert_eq!(
-            factory_constructor(
-                &identifier("A"),
-                "factory A ( {  } ) = _ ;"
-            ),
-            Ok((
-                "",
-                f([])
-            ))
+            factory_constructor(&identifier("A"), "factory A ( {  } ) = _ ;"),
+            Ok(("", f([])))
         );
     }
 
     #[test]
     fn factory_constructor_one_parameter() {
         assert_eq!(
-            factory_constructor(
-                &identifier("A"),
-                "factory A ( { B b } ) = _ ;"
-            ),
-            Ok((
-                "",
-                f([named_parameter("B", "b"),])
-            ))
+            factory_constructor(&identifier("A"), "factory A ( { B b } ) = _ ;"),
+            Ok(("", f([named_parameter("B", "b"),])))
         );
     }
 
     #[test]
     fn factory_constructor_two_parameters() {
         assert_eq!(
-            factory_constructor(
-                &identifier("A"),
-                "factory A ({ B b, C c }) = _ ;"
-            ),
+            factory_constructor(&identifier("A"), "factory A ({ B b, C c }) = _ ;"),
             Ok((
                 "",
-                f([
-                    named_parameter("B", "b"),
-                    named_parameter("C", "c"),
-                ])
+                f([named_parameter("B", "b"), named_parameter("C", "c"),])
             ))
         );
     }
@@ -191,26 +184,15 @@ mod tests {
                     B b  ,
                 }) = _ ;"
             ),
-            Ok((
-                "",
-                f([
-                    named_parameter("B", "b"),
-                ])
-            ))
+            Ok(("", f([named_parameter("B", "b"),])))
         );
     }
 
     #[test]
     fn factory_constructor_with_const() {
         assert_eq!(
-            factory_constructor(
-                &identifier("A"),
-                "const factory A ( {  } ) = _ ;"
-            ),
-            Ok((
-                "",
-                f_with_is_const([], true)
-            ))
+            factory_constructor(&identifier("A"), "const factory A ( {  } ) = _ ;"),
+            Ok(("", f_with_is_const([], true)))
         );
     }
 }

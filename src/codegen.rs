@@ -2,21 +2,23 @@
 
 use anyhow::Result;
 
-use crate::{file_finder::DartFile, parser::{ClassDefinition, ParsedFile, TopLevelItems}};
+use crate::{
+    file_finder::DartFile,
+    parser::{ClassDefinition, ParsedFile, TopLevelItems},
+};
 
 use self::data_class::ValidatedClass;
 
-mod part_of;
 mod data_class;
+mod part_of;
 mod utils;
 
-pub const GENERATED_FILE_HEADER: &str =
-"// coverage:ignore-file
+pub const GENERATED_FILE_HEADER: &str = "// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 ";
 
 pub const GENERATOR_INFO_TEXT: &str =
-"// **************************************************************************
+    "// **************************************************************************
 // Generated with Icegen
 // **************************************************************************";
 
@@ -30,7 +32,8 @@ impl StringEditor {
     }
 
     fn add_paragraph(&mut self, paragraph: impl AsRef<str>) {
-        self.content.push_str(&format!("\n{}\n", paragraph.as_ref()));
+        self.content
+            .push_str(&format!("\n{}\n", paragraph.as_ref()));
     }
 
     fn trim_end_and_add_final_newline(self) -> String {
@@ -71,7 +74,7 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
     let mut class_specific_code = StringEditor::new(String::new());
 
     for item in &file.parsed_file.items {
-        if let TopLevelItems::Class(class) = item{
+        if let TopLevelItems::Class(class) = item {
             if !class.contains_freezed_annotation() {
                 continue;
             }
@@ -108,11 +111,15 @@ fn generate_data_class(
     let validated = ValidatedClass::validate(class)?;
 
     editor.add_paragraph(data_class::mixin::generate_mixin(&validated)?);
-    editor.add_paragraph(data_class::abstract_class::generate_abstract_class(&validated)?);
-    editor.add_paragraph(data_class::impl_class::generate_impl_class(file, &validated)?);
+    editor.add_paragraph(data_class::abstract_class::generate_abstract_class(
+        &validated,
+    )?);
+    editor.add_paragraph(data_class::impl_class::generate_impl_class(
+        file, &validated,
+    )?);
 
-    *nullable_named_paramter_exists = *nullable_named_paramter_exists ||
-        validated.nullable_named_parameter_exists();
+    *nullable_named_paramter_exists =
+        *nullable_named_paramter_exists || validated.nullable_named_parameter_exists();
 
     Ok(())
 }

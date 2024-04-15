@@ -1,12 +1,12 @@
-
-pub mod mixin;
 pub mod abstract_class;
 pub mod impl_class;
+pub mod mixin;
 
 use anyhow::{anyhow, Result};
 
-
-use crate::{parser::{ClassDefinition, ClassItem, FactoryConstructor, Identifier, NamedParameter, PrivateConstructor}};
+use crate::parser::{
+    ClassDefinition, ClassItem, FactoryConstructor, Identifier, NamedParameter, PrivateConstructor,
+};
 
 pub struct ValidatedClass {
     name: Identifier,
@@ -20,7 +20,10 @@ impl ValidatedClass {
     }
 
     pub fn private_constructor_is_const(&self) -> bool {
-        self.private_constructor.as_ref().map(|v| v.is_const).unwrap_or_default()
+        self.private_constructor
+            .as_ref()
+            .map(|v| v.is_const)
+            .unwrap_or_default()
     }
 
     pub fn factory_constructor_params(&self) -> &[NamedParameter] {
@@ -32,7 +35,10 @@ impl ValidatedClass {
     }
 
     pub fn nullable_named_parameter_exists(&self) -> bool {
-        self.factory_constructor.params.iter().any(|param| param.parameter_type.nullable)
+        self.factory_constructor
+            .params
+            .iter()
+            .any(|param| param.parameter_type.nullable)
     }
 }
 
@@ -45,24 +51,33 @@ impl ValidatedClass {
             match item {
                 ClassItem::FactoryConstructor(constructor) => {
                     if factory_constructor.is_some() {
-                        return Err(anyhow!("Multiple factory constructors found for class {}", class_info.name));
+                        return Err(anyhow!(
+                            "Multiple factory constructors found for class {}",
+                            class_info.name
+                        ));
                     } else {
                         factory_constructor = Some(constructor.clone());
                     }
 
                     Self::validate_factory_constructor(constructor, class_info)?;
                 }
-                ClassItem::PrivateConstructor( constructor ) =>
+                ClassItem::PrivateConstructor(constructor) => {
                     if private_constructor.is_some() {
-                        return Err(anyhow!("Multiple private constructors found for class {}", class_info.name));
+                        return Err(anyhow!(
+                            "Multiple private constructors found for class {}",
+                            class_info.name
+                        ));
                     } else {
                         private_constructor = Some(constructor.clone());
                     }
+                }
             }
         }
 
-        let factory_constructor = factory_constructor
-            .ok_or(anyhow!("No factory constructor found for class {}", class_info.name))?;
+        let factory_constructor = factory_constructor.ok_or(anyhow!(
+            "No factory constructor found for class {}",
+            class_info.name
+        ))?;
 
         let validated = ValidatedClass {
             name: class_info.name.clone(),
@@ -73,7 +88,10 @@ impl ValidatedClass {
         Ok(validated)
     }
 
-    fn validate_factory_constructor(constructor: &FactoryConstructor, class_info: &ClassDefinition) -> Result<()> {
+    fn validate_factory_constructor(
+        constructor: &FactoryConstructor,
+        class_info: &ClassDefinition,
+    ) -> Result<()> {
         if constructor.params.is_empty() {
             return Err(anyhow!(
                 "Factory constructor in class {} has no named parameters",

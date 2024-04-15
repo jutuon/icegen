@@ -1,6 +1,9 @@
-
 use nom::{
-    bytes::complete::{tag, take}, combinator::{not, opt}, multi::many0, sequence::{preceded, tuple}, IResult
+    bytes::complete::{tag, take},
+    combinator::{not, opt},
+    multi::many0,
+    sequence::{preceded, tuple},
+    IResult,
 };
 
 use crate::parser::whitespace::wsc;
@@ -39,15 +42,12 @@ fn comma_separated<T>(
         return Ok((input, vec![]));
     };
 
-    let (input, more_parameters) = many0(
-        preceded(tuple((wsc, tag(","), wsc)), parser)
-    )(input)?;
+    let (input, more_parameters) = many0(preceded(tuple((wsc, tag(","), wsc)), parser))(input)?;
 
     parameters.extend(more_parameters);
 
     Ok((input, parameters))
 }
-
 
 pub fn item_parser<'a, T>(
     end_check: impl Fn(&'a str) -> bool,
@@ -61,9 +61,7 @@ pub fn item_parser<'a, T>(
         let mut try_count = 0;
         loop {
             let (input, _) = wsc(current_input)?;
-            let (input, items) = many0(
-                &mut item_parser
-            )(input)?;
+            let (input, items) = many0(&mut item_parser)(input)?;
             try_count += 1;
             let items_is_empty = items.is_empty();
             all_items.extend(items);
@@ -84,8 +82,5 @@ pub fn item_parser<'a, T>(
         }
     }
 
-    Ok((
-        current_input,
-        all_items,
-    ))
+    Ok((current_input, all_items))
 }

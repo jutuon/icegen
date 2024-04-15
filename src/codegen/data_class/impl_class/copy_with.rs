@@ -5,7 +5,8 @@ use crate::codegen::{data_class::ValidatedClass, utils::indent_lines};
 const DEFAULT_DETECTOR_VARIABLE: &str = "_detectDefaultValueInCopyWith";
 
 pub fn generate_detect_default_class_and_constant() -> String {
-    formatdoc!("
+    formatdoc!(
+        "
         /// @nodoc
         class _DetectDefaultValueInCopyWith {{
           const _DetectDefaultValueInCopyWith();
@@ -18,7 +19,8 @@ pub fn generate_detect_default_class_and_constant() -> String {
 }
 
 pub fn generate_impl_class_copy_with(class: &ValidatedClass) -> String {
-    formatdoc!("
+    formatdoc!(
+        "
         @override
         {} copyWith({{
         {}
@@ -42,11 +44,7 @@ fn generate_field_params(class: &ValidatedClass) -> String {
             String::new()
         };
 
-        fields.push_str(&format!(
-            "Object? {}{},\n",
-            field.name,
-            default_value,
-        ));
+        fields.push_str(&format!("Object? {}{},\n", field.name, default_value,));
     }
 
     fields
@@ -69,10 +67,7 @@ fn generate_field_args(class: &ValidatedClass) -> String {
         } else {
             format!(
                 "{}: ({} ?? this.{}) as {},\n",
-                field.name,
-                field.name,
-                field.name,
-                field.parameter_type,
+                field.name, field.name, field.name, field.parameter_type,
             )
         };
 

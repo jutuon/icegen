@@ -1,29 +1,29 @@
 //! Parse Dart files
 
-use nom::{branch::alt, IResult, Parser};
 use anyhow::Result;
+use nom::{branch::alt, IResult, Parser};
 
-use self::{class::{class}, import::{import_statement}, utils::item_parser};
+use self::{class::class, import::import_statement, utils::item_parser};
 
-mod whitespace;
+mod annotation;
+mod class;
+mod data_type;
+mod identifier;
+mod import;
 mod keyword;
 mod literal;
-mod identifier;
-mod annotation;
-mod import;
-mod class;
 mod utils;
-mod data_type;
+mod whitespace;
 
 pub use self::annotation::Annotation;
+pub use self::class::constructor::FactoryConstructor;
+pub use self::class::constructor::PrivateConstructor;
+pub use self::class::items::ClassItem;
+pub use self::class::items::ClassItemInfo;
+pub use self::class::named_parameters::NamedParameter;
+pub use self::class::ClassDefinition;
 pub use self::identifier::Identifier;
 pub use self::import::ImportStatement;
-pub use self::class::ClassDefinition;
-pub use self::class::items::ClassItemInfo;
-pub use self::class::items::ClassItem;
-pub use self::class::constructor::PrivateConstructor;
-pub use self::class::constructor::FactoryConstructor;
-pub use self::class::named_parameters::NamedParameter;
 
 #[derive(Debug, PartialEq)]
 pub enum TopLevelItems {
@@ -64,9 +64,7 @@ pub fn parse_file_contents(input: &str) -> IResult<&str, ParsedFile> {
         )),
         input,
     )
-        .map(|(input, items)|
-            (input, ParsedFile { items })
-        )
+    .map(|(input, items)| (input, ParsedFile { items }))
 }
 
 #[cfg(test)]
@@ -84,11 +82,11 @@ mod tests {
     fn c(name: &str) -> TopLevelItems {
         TopLevelItems::Class(ClassDefinition {
             annotations: vec![],
-            name: Identifier { name: name.to_string() },
-            mixin_types: vec![],
-            item_info: ClassItemInfo {
-                items: vec![],
+            name: Identifier {
+                name: name.to_string(),
             },
+            mixin_types: vec![],
+            item_info: ClassItemInfo { items: vec![] },
         })
     }
 
@@ -103,16 +101,12 @@ mod tests {
     #[test]
     fn multiple_classes_and_imports_and_unknown_content() {
         let wanted = ParsedFile {
-            items: vec![
-                i("a"),
-                i("b"),
-                c("B"),
-                c("C"),
-            ]
+            items: vec![i("a"), i("b"), c("B"), c("C")],
         };
 
         assert_eq!(
-            parse_file_contents("
+            parse_file_contents(
+                "
 
             import 'a';
             import 'b';
@@ -121,7 +115,8 @@ mod tests {
             class B {}
             sealed class C {}
 
-            "),
+            "
+            ),
             Ok(("", wanted))
         );
     }

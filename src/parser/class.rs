@@ -1,15 +1,18 @@
-
 pub mod constructor;
 pub mod items;
 pub mod named_parameters;
 
-use nom::{
-    bytes::complete::{tag}, combinator::{opt}, sequence::{delimited}, IResult
-};
+use nom::{bytes::complete::tag, combinator::opt, sequence::delimited, IResult};
 
 use self::items::{class_item_info, ClassItemInfo};
 
-use super::{annotation::{annotations0, Annotation}, identifier::{identifier, Identifier}, keyword::{class_keyword, with_keyword}, utils::comma_separated1, whitespace::wsc};
+use super::{
+    annotation::{annotations0, Annotation},
+    identifier::{identifier, Identifier},
+    keyword::{class_keyword, with_keyword},
+    utils::comma_separated1,
+    whitespace::wsc,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct ClassDefinition {
@@ -21,9 +24,9 @@ pub struct ClassDefinition {
 
 impl ClassDefinition {
     pub fn contains_freezed_annotation(&self) -> bool {
-        self.annotations.iter().any(|annotation| {
-            annotation.is_freezed_annotation()
-        })
+        self.annotations
+            .iter()
+            .any(|annotation| annotation.is_freezed_annotation())
     }
 }
 
@@ -38,13 +41,18 @@ pub fn class(input: &str) -> IResult<&str, ClassDefinition> {
     let (input, mixin_types) = parse_mixin_types(input)?;
     let (input, _) = wsc(input)?;
 
-    let (input, item_info) = delimited(
-        tag("{"),
-        |input| class_item_info(&name, input),
-        tag("}"),
-    )(input)?;
+    let (input, item_info) =
+        delimited(tag("{"), |input| class_item_info(&name, input), tag("}"))(input)?;
 
-    Ok((input, ClassDefinition { annotations, name, mixin_types, item_info }))
+    Ok((
+        input,
+        ClassDefinition {
+            annotations,
+            name,
+            mixin_types,
+            item_info,
+        },
+    ))
 }
 
 pub fn parse_mixin_types(input: &str) -> IResult<&str, Vec<Identifier>> {
@@ -72,81 +80,90 @@ mod tests {
     fn c(name: &str) -> ClassDefinition {
         ClassDefinition {
             annotations: vec![],
-            name: Identifier { name: name.to_string() },
-            mixin_types: vec![],
-            item_info: ClassItemInfo {
-                items: vec![],
+            name: Identifier {
+                name: name.to_string(),
             },
+            mixin_types: vec![],
+            item_info: ClassItemInfo { items: vec![] },
         }
     }
 
     fn annotated_c(annotations: &[&str], name: &str) -> ClassDefinition {
-        let annotations = annotations.iter()
+        let annotations = annotations
+            .iter()
             .map(|a| Annotation {
-                name: Identifier { name: a.to_string() },
+                name: Identifier {
+                    name: a.to_string(),
+                },
                 parameters: "".to_string(),
-            }).collect();
+            })
+            .collect();
         ClassDefinition {
             annotations,
-            name: Identifier { name: name.to_string() },
-            mixin_types: vec![],
-            item_info: ClassItemInfo {
-                items: vec![],
+            name: Identifier {
+                name: name.to_string(),
             },
+            mixin_types: vec![],
+            item_info: ClassItemInfo { items: vec![] },
         }
     }
 
     fn c_with_mixins(name: &str, with_types: &[&str]) -> ClassDefinition {
-        let with_types = with_types.iter().map(|a| Identifier { name: a.to_string() } ).collect();
+        let with_types = with_types
+            .iter()
+            .map(|a| Identifier {
+                name: a.to_string(),
+            })
+            .collect();
         ClassDefinition {
             annotations: vec![],
-            name: Identifier { name: name.to_string() },
-            mixin_types: with_types,
-            item_info: ClassItemInfo {
-                items: vec![],
+            name: Identifier {
+                name: name.to_string(),
             },
+            mixin_types: with_types,
+            item_info: ClassItemInfo { items: vec![] },
         }
     }
 
     fn c_with_items(name: &str, items: Vec<ClassItem>) -> ClassDefinition {
         ClassDefinition {
             annotations: vec![],
-            name: Identifier { name: name.to_string() },
-            mixin_types: vec![],
-            item_info: ClassItemInfo {
-                items,
+            name: Identifier {
+                name: name.to_string(),
             },
+            mixin_types: vec![],
+            item_info: ClassItemInfo { items },
         }
     }
 
-    fn named_parameter(
-        class_name: &str,
-        name: &str
-    ) -> NamedParameter {
+    fn named_parameter(class_name: &str, name: &str) -> NamedParameter {
         NamedParameter {
             annotations: vec![],
             required: false,
             parameter_type: DataType {
-                name: Identifier { name: class_name.to_string() },
+                name: Identifier {
+                    name: class_name.to_string(),
+                },
                 nullable: false,
                 type_args: vec![],
             },
-            name: Identifier { name: name.to_string() },
+            name: Identifier {
+                name: name.to_string(),
+            },
         }
     }
 
     fn factory_constructor(params: Vec<NamedParameter>) -> ClassItem {
-        ClassItem::FactoryConstructor(
-            FactoryConstructor { params, is_const: false }
-        )
+        ClassItem::FactoryConstructor(FactoryConstructor {
+            params,
+            is_const: false,
+        })
     }
 
     #[test]
     fn class_with_inner_scopes() {
         assert_eq!(
-            class(
-                "class A { { } }"
-            ),
+            class("class A { { } }"),
             // TOOD: Should class parsing be more strict?
             Ok((" }", c("A")))
         );
@@ -154,20 +171,13 @@ mod tests {
 
     #[test]
     fn class_with_annotation() {
-        assert_eq!(
-            class(
-                "@a class A {}"
-            ),
-            Ok(("", annotated_c(&["a"], "A")))
-        );
+        assert_eq!(class("@a class A {}"), Ok(("", annotated_c(&["a"], "A"))));
     }
 
     #[test]
     fn class_with_multiple_annotations() {
         assert_eq!(
-            class(
-                "@a @b @c class A {}"
-            ),
+            class("@a @b @c class A {}"),
             Ok(("", annotated_c(&["a", "b", "c"], "A")))
         );
     }
@@ -185,9 +195,7 @@ mod tests {
     #[test]
     fn class_and_with_keyword_and_one_type() {
         assert_eq!(
-            class(
-                "class A with B {}"
-            ),
+            class("class A with B {}"),
             Ok(("", c_with_mixins("A", &["B"])))
         );
     }
@@ -195,9 +203,7 @@ mod tests {
     #[test]
     fn class_and_with_keyword_and_two_types() {
         assert_eq!(
-            class(
-                "class A with B, C {}"
-            ),
+            class("class A with B, C {}"),
             Ok(("", c_with_mixins("A", &["B", "C"])))
         );
     }
@@ -205,14 +211,14 @@ mod tests {
     #[test]
     fn class_and_private_constructor() {
         assert_eq!(
-            class(
-                "class A { A._(); }"
-            ),
+            class("class A { A._(); }"),
             Ok((
                 "",
                 c_with_items(
                     "A",
-                    vec![ClassItem::PrivateConstructor(PrivateConstructor { is_const: false })],
+                    vec![ClassItem::PrivateConstructor(PrivateConstructor {
+                        is_const: false
+                    })],
                 )
             ))
         );
@@ -231,9 +237,9 @@ mod tests {
                 "",
                 c_with_items(
                     "A",
-                    vec![
-                        ClassItem::PrivateConstructor(PrivateConstructor { is_const: false }),
-                    ],
+                    vec![ClassItem::PrivateConstructor(PrivateConstructor {
+                        is_const: false
+                    }),],
                 )
             ))
         );
@@ -253,13 +259,7 @@ mod tests {
                 "",
                 c_with_items(
                     "A",
-                    vec![
-                        factory_constructor(
-                            vec![
-                                named_parameter("B", "b"),
-                            ]
-                        ),
-                    ],
+                    vec![factory_constructor(vec![named_parameter("B", "b"),]),],
                 )
             ))
         );

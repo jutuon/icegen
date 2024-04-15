@@ -1,9 +1,9 @@
 //! Find and parse Dart files from a directory
 
-use std::path::PathBuf;
-use std::{path::Path};
-use std::fs;
 use anyhow::{Context, Result};
+use std::fs;
+use std::path::Path;
+use std::path::PathBuf;
 
 use crate::parser::ParsedFile;
 
@@ -25,15 +25,22 @@ pub struct ParsedDartFiles {
     pub code_files: Vec<DartFile>,
 }
 
-pub fn parse_freezed_classes_from_dart_files(code_dir: impl AsRef<Path>) -> Result<ParsedDartFiles> {
+pub fn parse_freezed_classes_from_dart_files(
+    code_dir: impl AsRef<Path>,
+) -> Result<ParsedDartFiles> {
     let mut parsed_files = Vec::<DartFile>::new();
 
     handle_one_code_dir(code_dir, &mut parsed_files)?;
 
-    Ok(ParsedDartFiles { code_files: parsed_files })
+    Ok(ParsedDartFiles {
+        code_files: parsed_files,
+    })
 }
 
-fn handle_one_code_dir(code_dir: impl AsRef<Path>, parsing_results: &mut Vec<DartFile>) -> Result<()> {
+fn handle_one_code_dir(
+    code_dir: impl AsRef<Path>,
+    parsing_results: &mut Vec<DartFile>,
+) -> Result<()> {
     for entry in fs::read_dir(code_dir)? {
         let entry = entry?;
 
@@ -65,7 +72,6 @@ fn handle_one_code_dir(code_dir: impl AsRef<Path>, parsing_results: &mut Vec<Dar
     Ok(())
 }
 
-
 fn handle_dart_file(dart_code_file: impl AsRef<Path>) -> Result<Option<DartFile>> {
     let path = dart_code_file.as_ref();
     let contents = fs::read_to_string(path)
@@ -73,10 +79,8 @@ fn handle_dart_file(dart_code_file: impl AsRef<Path>) -> Result<Option<DartFile>
 
     let file = ParsedFile::parse_dart_file(&contents)?;
 
-    Ok(Some(
-        DartFile {
-            path: path.to_owned(),
-            parsed_file: file,
-        }
-    ))
+    Ok(Some(DartFile {
+        path: path.to_owned(),
+        parsed_file: file,
+    }))
 }

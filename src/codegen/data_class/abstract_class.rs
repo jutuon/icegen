@@ -19,16 +19,13 @@ pub fn generate_abstract_class(class: &ValidatedClass) -> Result<String> {
             ""
         };
 
-        format!(
-            "\n  {}_{}._() : super._();",
-            const_keyword,
-            class.name,
-        )
+        format!("\n  {}_{}._() : super._();", const_keyword, class.name,)
     } else {
         "".to_string()
     };
 
-    let abstract_class = formatdoc!("
+    let abstract_class = formatdoc!(
+        "
         /// @nodoc
         abstract class _{} {} {} {{
         {}{}
@@ -50,7 +47,8 @@ fn generate_abstract_class_factory(class: &ValidatedClass) -> Result<String> {
         ""
     };
 
-    let factory = formatdoc!("
+    let factory = formatdoc!(
+        "
         {}factory _{}({{
         {}
         }}) = _${}Impl;",
@@ -67,17 +65,11 @@ fn generate_abstract_class_field_params(class: &ValidatedClass) -> String {
     let mut field_getters = String::new();
 
     for field in class.factory_constructor_params() {
-        let required = if field.required {
-            "required "
-        } else {
-            ""
-        };
+        let required = if field.required { "required " } else { "" };
 
         field_getters.push_str(&format!(
             "{}{} {},\n",
-            required,
-            field.parameter_type,
-            field.name,
+            required, field.parameter_type, field.name,
         ));
     }
 

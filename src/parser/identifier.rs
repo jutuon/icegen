@@ -1,11 +1,10 @@
-
 use core::fmt;
 
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_while},
-    character::{complete::{alpha1}},
-    IResult
+    character::complete::alpha1,
+    IResult,
 };
 
 #[derive(Debug, PartialEq, Clone)]
@@ -27,14 +26,15 @@ impl fmt::Display for Identifier {
 
 pub fn identifier(input: &str) -> IResult<&str, Identifier> {
     // Check first character
-    let _ = alt((
-        alpha1,
-        tag("_"),
-        tag("$"),
-    ))(input)?;
+    let _ = alt((alpha1, tag("_"), tag("$")))(input)?;
     let (input, identifier) = take_while(is_valid_identifier)(input)?;
 
-    Ok((input, Identifier { name: identifier.to_string() }))
+    Ok((
+        input,
+        Identifier {
+            name: identifier.to_string(),
+        },
+    ))
 }
 
 fn is_valid_identifier(input: char) -> bool {
@@ -59,7 +59,12 @@ mod tests {
     fn identifier_ends_with_parenthesis() {
         assert_eq!(
             identifier("test$_()"),
-            Ok(("()", Identifier { name : "test$_".to_string() }))
+            Ok((
+                "()",
+                Identifier {
+                    name: "test$_".to_string()
+                }
+            ))
         );
     }
 
@@ -67,7 +72,12 @@ mod tests {
     fn identifier_ends_with_comma() {
         assert_eq!(
             identifier("test$_,"),
-            Ok((",", Identifier { name : "test$_".to_string() }))
+            Ok((
+                ",",
+                Identifier {
+                    name: "test$_".to_string()
+                }
+            ))
         );
     }
 
@@ -75,16 +85,25 @@ mod tests {
     fn identifier_input_continues() {
         assert_eq!(
             identifier("test$_ a"),
-            Ok((" a", Identifier { name : "test$_".to_string() }))
+            Ok((
+                " a",
+                Identifier {
+                    name: "test$_".to_string()
+                }
+            ))
         );
     }
-
 
     #[test]
     fn identifier_input_ends() {
         assert_eq!(
             identifier("test$_"),
-            Ok(("", Identifier { name : "test$_".to_string() }))
+            Ok((
+                "",
+                Identifier {
+                    name: "test$_".to_string()
+                }
+            ))
         );
     }
 
@@ -92,16 +111,25 @@ mod tests {
     fn identifier_first_character_underscore() {
         assert_eq!(
             identifier("_a"),
-            Ok(("", Identifier { name : "_a".to_string() }))
+            Ok((
+                "",
+                Identifier {
+                    name: "_a".to_string()
+                }
+            ))
         );
     }
-
 
     #[test]
     fn identifier_first_character_dollar() {
         assert_eq!(
             identifier("$a"),
-            Ok(("", Identifier { name : "$a".to_string() }))
+            Ok((
+                "",
+                Identifier {
+                    name: "$a".to_string()
+                }
+            ))
         );
     }
 }

@@ -1,9 +1,13 @@
+use nom::{bytes::complete::tag, combinator::opt, IResult};
 
-use nom::{
-    bytes::complete::tag, combinator::opt, IResult
+use crate::parser::{
+    annotation::{annotations0, Annotation},
+    data_type::{data_type, DataType},
+    identifier::{identifier, Identifier},
+    keyword::required_keyword,
+    utils::comma_separated0,
+    whitespace::wsc,
 };
-
-use crate::parser::{annotation::{annotations0, Annotation}, data_type::{data_type, DataType}, identifier::{identifier, Identifier}, keyword::required_keyword, utils::comma_separated0, whitespace::wsc};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct NamedParameter {
@@ -34,12 +38,15 @@ pub fn named_parameter(input: &str) -> IResult<&str, NamedParameter> {
     let (input, _) = wsc(input)?;
     let (input, name) = identifier(input)?;
 
-    Ok((input, NamedParameter {
-        annotations,
-        required: required.is_some(),
-        parameter_type,
-        name,
-    }))
+    Ok((
+        input,
+        NamedParameter {
+            annotations,
+            required: required.is_some(),
+            parameter_type,
+            name,
+        },
+    ))
 }
 
 pub fn named_parameters0(input: &str) -> IResult<&str, Vec<NamedParameter>> {
@@ -49,7 +56,6 @@ pub fn named_parameters0(input: &str) -> IResult<&str, Vec<NamedParameter>> {
     Ok((input, params))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -57,13 +63,17 @@ mod tests {
 
     fn a(name: &str) -> Annotation {
         Annotation {
-            name: Identifier { name: name.to_string() },
+            name: Identifier {
+                name: name.to_string(),
+            },
             parameters: "".to_string(),
         }
     }
 
     fn c_name(name: &str) -> Identifier {
-        Identifier { name: name.to_string() }
+        Identifier {
+            name: name.to_string(),
+        }
     }
 
     fn parameter(class_name: &str, name: &str) -> NamedParameter {
@@ -75,7 +85,9 @@ mod tests {
                 nullable: false,
                 type_args: vec![],
             },
-            name: Identifier { name: name.to_string() },
+            name: Identifier {
+                name: name.to_string(),
+            },
         }
     }
 
@@ -93,7 +105,9 @@ mod tests {
                         nullable: false,
                         type_args: vec![],
                     },
-                    name: Identifier { name: "a".to_string() },
+                    name: Identifier {
+                        name: "a".to_string()
+                    },
                 }
             ))
         );
@@ -106,25 +120,14 @@ mod tests {
 
     #[test]
     fn empty_parameter_list() {
-        assert_eq!(
-            named_parameters0(" "),
-            Ok((
-                "",
-                vec![]
-            ))
-        );
+        assert_eq!(named_parameters0(" "), Ok(("", vec![])));
     }
 
     #[test]
     fn one_paramters_allow_comma_in_end() {
         assert_eq!(
             named_parameters0("A a, "),
-            Ok((
-                " ",
-                vec![
-                    parameter("A", "a"),
-                ]
-            ))
+            Ok((" ", vec![parameter("A", "a"),]))
         );
     }
 
@@ -132,12 +135,7 @@ mod tests {
     fn one_paramters_trailing_comma_consumed_even_if_whitespace_before_it() {
         assert_eq!(
             named_parameters0("A a   , "),
-            Ok((
-                " ",
-                vec![
-                    parameter("A", "a"),
-                ]
-            ))
+            Ok((" ", vec![parameter("A", "a"),]))
         );
     }
 
@@ -145,12 +143,7 @@ mod tests {
     fn one_named_paramters_no_comma_in_end_works() {
         assert_eq!(
             named_parameters0("A a"),
-            Ok((
-                "",
-                vec![
-                    parameter("A", "a"),
-                ]
-            ))
+            Ok(("", vec![parameter("A", "a"),]))
         );
     }
 
@@ -158,13 +151,7 @@ mod tests {
     fn two_named_paramters_allow_comma_in_end() {
         assert_eq!(
             named_parameters0("A a, B b, "),
-            Ok((
-                " ",
-                vec![
-                    parameter("A", "a"),
-                    parameter("B", "b"),
-                ]
-            ))
+            Ok((" ", vec![parameter("A", "a"), parameter("B", "b"),]))
         );
     }
 
@@ -172,13 +159,7 @@ mod tests {
     fn two_named_paramters_no_comma_in_end_works() {
         assert_eq!(
             named_parameters0("A a, B b"),
-            Ok((
-                "",
-                vec![
-                    parameter("A", "a"),
-                    parameter("B", "b"),
-                ]
-            ))
+            Ok(("", vec![parameter("A", "a"), parameter("B", "b"),]))
         );
     }
 }

@@ -1,11 +1,6 @@
-
 use core::fmt;
 
-use nom::{
-    bytes::complete::{tag},
-    combinator::{opt},
-    IResult
-};
+use nom::{bytes::complete::tag, combinator::opt, IResult};
 
 use super::{identifier::identifier, utils::comma_separated1, whitespace::wsc, Identifier};
 
@@ -31,7 +26,14 @@ impl fmt::Display for DataType {
         let generics = if self.type_args.is_empty() {
             "".to_string()
         } else {
-            format!("<{}>", self.type_args.iter().map(|t| t.to_string()).collect::<Vec<String>>().join(", "))
+            format!(
+                "<{}>",
+                self.type_args
+                    .iter()
+                    .map(|t| t.to_string())
+                    .collect::<Vec<String>>()
+                    .join(", ")
+            )
         };
 
         if self.nullable {
@@ -57,7 +59,7 @@ pub fn data_type(input: &str) -> IResult<&str, DataType> {
             name,
             nullable: nullable.is_some(),
             type_args: type_args.unwrap_or_default(),
-        }
+        },
     ))
 }
 
@@ -71,14 +73,15 @@ pub fn generics(input: &str) -> IResult<&str, Vec<DataType>> {
     Ok((input, types))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn dtype(name: &str, nullable: bool, type_args: impl AsRef<[DataType]>) -> DataType {
         DataType {
-            name: Identifier { name: name.to_string() },
+            name: Identifier {
+                name: name.to_string(),
+            },
             nullable,
             type_args: type_args.as_ref().to_vec(),
         }
@@ -86,18 +89,12 @@ mod tests {
 
     #[test]
     fn data_type_non_nullable() {
-        assert_eq!(
-            data_type("Test "),
-            Ok(("", dtype("Test", false, [])))
-        );
+        assert_eq!(data_type("Test "), Ok(("", dtype("Test", false, []))));
     }
 
     #[test]
     fn data_type_nullable() {
-        assert_eq!(
-            data_type("Test? "),
-            Ok(("", dtype("Test", true, [])))
-        );
+        assert_eq!(data_type("Test? "), Ok(("", dtype("Test", true, []))));
     }
 
     #[test]

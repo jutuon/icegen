@@ -1,16 +1,18 @@
 //! Update generated code files if needed
 
-
-
-use std::fs;
 use anyhow::{anyhow, Result};
+use std::fs;
 
 use crate::codegen::{generate_data_class_file, GENERATED_FILE_HEADER};
-use crate::config::{ArgsConfig};
-use crate::file_finder::{DartFile, ParsedDartFiles, FREEZED_GENERATED_CODE_FILE_EXTENSION_WITHOUT_LEADING_DOT};
+use crate::config::ArgsConfig;
+use crate::file_finder::{
+    DartFile, ParsedDartFiles, FREEZED_GENERATED_CODE_FILE_EXTENSION_WITHOUT_LEADING_DOT,
+};
 
-
-pub fn update_generated_code_for_parsed_files(config: &ArgsConfig, files: ParsedDartFiles) -> Result<()> {
+pub fn update_generated_code_for_parsed_files(
+    config: &ArgsConfig,
+    files: ParsedDartFiles,
+) -> Result<()> {
     for file in files.code_files {
         if !file.parsed_file.contains_freezed_annotated_class() {
             continue;
@@ -28,9 +30,9 @@ pub fn update_generated_code_if_needed(
     file: DartFile,
     new_generated_code: String,
 ) -> Result<()> {
-    let generated_code_path = file.path.with_extension(
-        FREEZED_GENERATED_CODE_FILE_EXTENSION_WITHOUT_LEADING_DOT
-    );
+    let generated_code_path = file
+        .path
+        .with_extension(FREEZED_GENERATED_CODE_FILE_EXTENSION_WITHOUT_LEADING_DOT);
 
     if generated_code_path.exists() {
         let current_generated_code = fs::read_to_string(&generated_code_path)?;

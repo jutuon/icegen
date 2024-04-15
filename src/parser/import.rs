@@ -1,6 +1,6 @@
-
 use nom::{
-    bytes::complete::{tag, take_until}, IResult
+    bytes::complete::{tag, take_until},
+    IResult,
 };
 
 use super::{keyword::import_keyword, literal::string_literal, whitespace::wsc};
@@ -39,7 +39,12 @@ mod tests {
     fn import_statement_parsed_correctly() {
         assert_eq!(
             import_statement("import // \n'hello' \n   ;a"),
-            Ok(("a", ImportStatement { path: "hello".to_string() }))
+            Ok((
+                "a",
+                ImportStatement {
+                    path: "hello".to_string()
+                }
+            ))
         );
     }
 }

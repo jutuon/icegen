@@ -1,11 +1,10 @@
-
-use nom::{
-    branch::alt, IResult, Parser
-};
+use nom::{branch::alt, IResult, Parser};
 
 use crate::parser::{identifier::Identifier, utils::item_parser};
 
-use super::constructor::{factory_constructor, private_constructor, FactoryConstructor, PrivateConstructor};
+use super::constructor::{
+    factory_constructor, private_constructor, FactoryConstructor, PrivateConstructor,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct ClassItemInfo {
@@ -18,7 +17,10 @@ pub enum ClassItem {
     FactoryConstructor(FactoryConstructor),
 }
 
-pub fn class_item_info<'a>(class_name: &Identifier, input: &'a str) -> IResult<&'a str, ClassItemInfo> {
+pub fn class_item_info<'a>(
+    class_name: &Identifier,
+    input: &'a str,
+) -> IResult<&'a str, ClassItemInfo> {
     item_parser(
         |input| input.starts_with('}'),
         alt((
@@ -27,7 +29,5 @@ pub fn class_item_info<'a>(class_name: &Identifier, input: &'a str) -> IResult<&
         )),
         input,
     )
-        .map(|(input, items)|
-            (input, ClassItemInfo { items })
-        )
+    .map(|(input, items)| (input, ClassItemInfo { items }))
 }

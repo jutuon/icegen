@@ -1,8 +1,4 @@
-
-
-use nom::{
-    bytes::complete::tag, IResult
-};
+use nom::{bytes::complete::tag, IResult};
 
 #[derive(Debug, PartialEq)]
 pub enum Keyword {
@@ -51,10 +47,7 @@ mod tests {
 
     #[test]
     fn import_keyword_parses_correctly() {
-        assert_eq!(
-            import_keyword("import a"),
-            Ok(("a", Keyword::Import))
-        );
+        assert_eq!(import_keyword("import a"), Ok(("a", Keyword::Import)));
     }
 
     #[test]
@@ -64,9 +57,6 @@ mod tests {
 
     #[test]
     fn class_keyword_parses_correctly() {
-        assert_eq!(
-            class_keyword("class a"),
-            Ok(("a", Keyword::Class))
-        );
+        assert_eq!(class_keyword("class a"), Ok(("a", Keyword::Class)));
     }
 }

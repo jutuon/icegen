@@ -6,13 +6,11 @@ pub fn generate_impl_class_hash_code(class: &ValidatedClass) -> String {
     let mut fields = String::new();
 
     for field in class.factory_constructor_params() {
-        fields.push_str(&format!(
-            "{},\n",
-            field.name,
-        ));
+        fields.push_str(&format!("{},\n", field.name,));
     }
 
-    let hash_code = formatdoc!("
+    let hash_code = formatdoc!(
+        "
         @override
         int get hashCode => Object.hash(
           runtimeType,

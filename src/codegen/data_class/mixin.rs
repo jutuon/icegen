@@ -8,7 +8,8 @@ use super::ValidatedClass;
 pub fn generate_mixin(class: &ValidatedClass) -> Result<String> {
     validate_class_name(&class.name)?;
     let exception_identifier = format!("_privateConstructorError{}", class.name);
-    let variable_for_exception = formatdoc!("
+    let variable_for_exception = formatdoc!(
+        "
         /// @nodoc
         final {} = UnsupportedError(
             'Private constructor {}._() was called. Please call factory constructor instead.');",
@@ -16,7 +17,8 @@ pub fn generate_mixin(class: &ValidatedClass) -> Result<String> {
         class.name,
     );
 
-    let mixin = formatdoc!("
+    let mixin = formatdoc!(
+        "
         {}
 
         /// @nodoc
@@ -40,9 +42,7 @@ fn generate_field_getters_for_mixin(class: &ValidatedClass, exception_identifier
     for field in class.factory_constructor_params() {
         field_getters.push_str(&format!(
             "  {} get {} => throw {};\n",
-            field.parameter_type,
-            field.name,
-            exception_identifier,
+            field.parameter_type, field.name, exception_identifier,
         ));
     }
     field_getters.pop();
@@ -67,18 +67,15 @@ fn generate_copy_with_named_parameters(class: &ValidatedClass) -> String {
 
     for field in class.factory_constructor_params() {
         let nullable_type = field.parameter_type.to_nullable();
-        params.push_str(&format!(
-            "{} {},\n",
-            nullable_type,
-            field.name,
-        ));
+        params.push_str(&format!("{} {},\n", nullable_type, field.name,));
     }
 
     params
 }
 
 fn generate_copy_with(class: &ValidatedClass, exception_identifier: &str) -> String {
-    formatdoc!("
+    formatdoc!(
+        "
         {} copyWith({{
         {}
         }}) => throw {};",

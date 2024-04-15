@@ -1,7 +1,7 @@
 use anyhow::Result;
 use indoc::formatdoc;
 
-use crate::{codegen::{data_class::ValidatedClass, utils::indent_lines}};
+use crate::codegen::{data_class::ValidatedClass, utils::indent_lines};
 
 pub fn generate_impl_class_constructor(class: &ValidatedClass) -> Result<String> {
     let const_keyword = if class.factory_constructor_is_const() {
@@ -40,7 +40,7 @@ fn generate_impl_class_field_params(class: &ValidatedClass) -> String {
             ""
         };
 
-        let default_value = if let Some(_) = field.default_annotation() {
+        let default_value = if field.default_annotation().is_some() {
             format!(" = _{}DefaultValue", field.name)
         } else {
             "".to_string()

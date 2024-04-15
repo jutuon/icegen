@@ -39,7 +39,7 @@ fn generate_field_params(class: &ValidatedClass) -> String {
         let default_value = if field.parameter_type.nullable {
             format!(" = {}", DEFAULT_DETECTOR_VARIABLE)
         } else {
-            format!("")
+            String::new()
         };
 
         fields.push_str(&format!(

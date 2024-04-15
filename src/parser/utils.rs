@@ -3,7 +3,7 @@ use nom::{
     bytes::complete::{tag, take}, combinator::{not, opt}, multi::many0, sequence::{preceded, tuple}, IResult
 };
 
-use crate::parser::{whitespace::wsc};
+use crate::parser::whitespace::wsc;
 
 pub fn comma_separated0<T>(
     parser: impl Fn(&str) -> IResult<&str, T>,
@@ -28,7 +28,7 @@ fn comma_separated<T>(
     let (_, _) = not(tag(","))(input)?;
 
     let (input, first) = if require_first {
-        (&parser)(input).map(|(input, v)| (input, Some(v)))
+        parser(input).map(|(input, v)| (input, Some(v)))
     } else {
         opt(&parser)(input)
     }?;
@@ -45,7 +45,7 @@ fn comma_separated<T>(
 
     parameters.extend(more_parameters);
 
-    return Ok((input, parameters));
+    Ok((input, parameters))
 }
 
 

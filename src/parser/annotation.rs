@@ -1,9 +1,9 @@
 
 use nom::{
-    branch::alt, bytes::complete::{tag, take}, combinator::{fail, opt}, multi::many0, sequence::{delimited}, IResult, Parser
+    branch::alt, bytes::complete::{tag, take}, combinator::{fail, opt}, multi::many0, sequence::delimited, IResult, Parser
 };
 
-use super::{identifier::{identifier, Identifier}, literal::{string_literal_str}, whitespace::{some_whitespace, wsc}};
+use super::{identifier::{identifier, Identifier}, literal::string_literal_str, whitespace::{some_whitespace, wsc}};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Annotation {
@@ -26,7 +26,7 @@ pub fn annotation(input: &str) -> IResult<&str, Annotation> {
     let (input, _) = wsc(input)?;
     let (input, identifier) = identifier(input)?;
     let (input, _) = wsc(input)?;
-    let (input, parameters_str) = if input.starts_with("(") {
+    let (input, parameters_str) = if input.starts_with('(') {
         delimited(
             tag("("),
             get_parameters_string,
@@ -68,7 +68,7 @@ fn get_parameters_string(
         let (input, selected) = alt((
             some_whitespace.map(|_| State::WhitespaceOrComment),
             string_literal_str.map(|_| State::StringLiteal),
-            opt(take(1usize)).map(|v| State::Character(v))
+            opt(take(1usize)).map(State::Character)
         ))(current_input)?;
 
         consumed_len += current_input.len() - input.len();

@@ -1,6 +1,6 @@
 
 use nom::{
-    bytes::complete::{tag}, combinator::{opt}, IResult
+    bytes::complete::tag, combinator::opt, IResult
 };
 
 use crate::parser::{annotation::{annotations0, Annotation}, data_type::{data_type, DataType}, identifier::{identifier, Identifier}, keyword::required_keyword, utils::comma_separated0, whitespace::wsc};
@@ -25,7 +25,7 @@ impl NamedParameter {
     }
 }
 
-pub fn named_parameter<'a>(input: &'a str) -> IResult<&'a str, NamedParameter> {
+pub fn named_parameter(input: &str) -> IResult<&str, NamedParameter> {
     let (input, annotations) = annotations0(input)?;
     let (input, _) = wsc(input)?;
     let (input, required) = opt(required_keyword)(input)?;

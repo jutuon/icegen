@@ -51,13 +51,10 @@ impl ValidatedFile {
         let mut flutter_foundation_import_exists = false;
 
         for item in &parsed_file.items {
-            match item {
-                TopLevelItems::Import(import) => {
-                    if import.is_flutter_foundation_import() {
-                        flutter_foundation_import_exists = true;
-                    }
+            if let TopLevelItems::Import(import) = item {
+                if import.is_flutter_foundation_import() {
+                    flutter_foundation_import_exists = true;
                 }
-                _ => (),
             }
         }
 
@@ -74,24 +71,21 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
     let mut class_specific_code = StringEditor::new(String::new());
 
     for item in &file.parsed_file.items {
-        match item {
-            TopLevelItems::Class(class) => {
-                if !class.contains_freezed_annotation() {
-                    continue;
-                }
-
-                generate_data_class(
-                    &validated,
-                    class,
-                    &mut class_specific_code,
-                    &mut nullable_named_parameter_exists,
-                )?;
+        if let TopLevelItems::Class(class) = item{
+            if !class.contains_freezed_annotation() {
+                continue;
             }
-            _ => (),
+
+            generate_data_class(
+                &validated,
+                class,
+                &mut class_specific_code,
+                &mut nullable_named_parameter_exists,
+            )?;
         }
     }
 
-    let mut editor = StringEditor::new(format!("{}", GENERATED_FILE_HEADER));
+    let mut editor = StringEditor::new(GENERATED_FILE_HEADER.to_string());
 
     editor.add_paragraph(part_of::generate_part_of_statement(file)?);
     editor.add_paragraph(GENERATOR_INFO_TEXT);

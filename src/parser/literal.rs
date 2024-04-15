@@ -9,15 +9,6 @@ pub const DOUBLE_QUOTE: &str = "\"";
 // TODO: Support triple quotes """ and ''' for multiline strings.
 //       Support raw strings r"string" and r'string'.
 
-#[derive(Debug, PartialEq)]
-pub enum Literal {
-    String(String),
-}
-
-pub fn literal(input: &str) -> IResult<&str, Literal> {
-    string_literal(input).map(|(_, s)| (input, Literal::String(s)))
-}
-
 pub fn string_literal(input: &str) -> IResult<&str, String> {
     string_literal_str(input)
         .map(

@@ -14,15 +14,6 @@ pub enum Keyword {
     Const,
 }
 
-// TODO: Remove or update
-pub fn keyword(input: &str) -> IResult<&str, Keyword> {
-    alt((
-        import_keyword,
-        class_keyword,
-        factory_keyword,
-    ))(input)
-}
-
 // TODO: Keyword which ends in a comment does not work
 
 pub fn import_keyword(input: &str) -> IResult<&str, Keyword> {

@@ -36,6 +36,10 @@ impl StringEditor {
     fn trim_end_and_add_final_newline(self) -> String {
         format!("{}\n", self.content.trim_end())
     }
+
+    fn append(&mut self, editor: &StringEditor) {
+        self.content.push_str(&editor.content);
+    }
 }
 
 struct ValidatedFile {
@@ -66,11 +70,8 @@ impl ValidatedFile {
 pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
     let validated = ValidatedFile::validate(&file.parsed_file)?;
 
-    let mut editor = StringEditor::new(format!("{}", GENERATED_FILE_HEADER));
-
-    editor.add_paragraph(part_of::generate_part_of_statement(file)?);
-    editor.add_paragraph(GENERATOR_INFO_TEXT);
-    editor.add_paragraph(data_class::impl_class::generate_detect_default_class_and_constant());
+    let mut nullable_named_parameter_exists = false;
+    let mut class_specific_code = StringEditor::new(String::new());
 
     for item in &file.parsed_file.items {
         match item {
@@ -79,21 +80,45 @@ pub fn generate_data_class_file(file: &DartFile) -> Result<String> {
                     continue;
                 }
 
-                generate_data_class(&validated, class, &mut editor)?;
+                generate_data_class(
+                    &validated,
+                    class,
+                    &mut class_specific_code,
+                    &mut nullable_named_parameter_exists,
+                )?;
             }
             _ => (),
         }
     }
 
+    let mut editor = StringEditor::new(format!("{}", GENERATED_FILE_HEADER));
+
+    editor.add_paragraph(part_of::generate_part_of_statement(file)?);
+    editor.add_paragraph(GENERATOR_INFO_TEXT);
+
+    if nullable_named_parameter_exists {
+        editor.add_paragraph(data_class::impl_class::generate_detect_default_class_and_constant());
+    }
+
+    editor.append(&class_specific_code);
+
     Ok(editor.trim_end_and_add_final_newline())
 }
 
-fn generate_data_class(file: &ValidatedFile, class: &ClassDefinition, editor: &mut StringEditor) -> Result<()> {
+fn generate_data_class(
+    file: &ValidatedFile,
+    class: &ClassDefinition,
+    editor: &mut StringEditor,
+    nullable_named_paramter_exists: &mut bool,
+) -> Result<()> {
     let validated = ValidatedClass::validate(class)?;
 
     editor.add_paragraph(data_class::mixin::generate_mixin(&validated)?);
     editor.add_paragraph(data_class::abstract_class::generate_abstract_class(&validated)?);
     editor.add_paragraph(data_class::impl_class::generate_impl_class(file, &validated)?);
+
+    *nullable_named_paramter_exists = *nullable_named_paramter_exists ||
+        validated.nullable_named_parameter_exists();
 
     Ok(())
 }

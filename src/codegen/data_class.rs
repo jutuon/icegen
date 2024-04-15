@@ -30,6 +30,10 @@ impl ValidatedClass {
     pub fn factory_constructor_is_const(&self) -> bool {
         self.factory_constructor.is_const
     }
+
+    pub fn nullable_named_parameter_exists(&self) -> bool {
+        self.factory_constructor.params.iter().any(|param| param.parameter_type.nullable)
+    }
 }
 
 impl ValidatedClass {

@@ -1,7 +1,7 @@
 
 
 use nom::{
-    branch::alt, bytes::complete::{tag}, IResult
+    bytes::complete::tag, IResult
 };
 
 #[derive(Debug, PartialEq)]

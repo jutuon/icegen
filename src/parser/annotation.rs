@@ -1,9 +1,9 @@
 
 use nom::{
-    branch::alt, bytes::complete::{tag, take, take_until}, character::complete::{multispace0, multispace1}, combinator::{fail, map, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult, Parser
+    branch::alt, bytes::complete::{tag, take}, combinator::{fail, opt}, multi::many0, sequence::{delimited}, IResult, Parser
 };
 
-use super::{identifier::{identifier, Identifier}, literal::{string_literal, string_literal_str}, whitespace::{some_whitespace, wsc, LINE_COMMENT_END, LINE_COMMENT_START, MULTI_LINE_COMMENT_END, MULTI_LINE_COMMENT_START}};
+use super::{identifier::{identifier, Identifier}, literal::{string_literal_str}, whitespace::{some_whitespace, wsc}};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Annotation {

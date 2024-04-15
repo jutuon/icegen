@@ -1,6 +1,6 @@
 
 use nom::{
-    branch::alt, bytes::complete::{is_not, tag, take_until}, character::complete::{multispace0, multispace1}, combinator::{map, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult
+    branch::alt, bytes::complete::{is_not, tag}, combinator::{opt}, sequence::{delimited}, IResult
 };
 
 pub const SINGLE_QUOTE: &str = "'";

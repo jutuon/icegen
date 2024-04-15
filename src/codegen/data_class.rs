@@ -4,9 +4,9 @@ pub mod abstract_class;
 pub mod impl_class;
 
 use anyhow::{anyhow, Result};
-use indoc::{formatdoc, indoc};
 
-use crate::{file_finder::DartFile, parser::{ClassDefinition, ClassItem, FactoryConstructor, Identifier, NamedParameter, ParsedFile, PrivateConstructor, TopLevelItems}};
+
+use crate::{parser::{ClassDefinition, ClassItem, FactoryConstructor, Identifier, NamedParameter, PrivateConstructor}};
 
 pub struct ValidatedClass {
     name: Identifier,

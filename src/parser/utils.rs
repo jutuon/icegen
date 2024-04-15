@@ -1,9 +1,9 @@
 
 use nom::{
-    branch::alt, bytes::complete::{is_not, tag, take, take_until, take_while}, character::complete::{multispace0, multispace1}, combinator::{map, not, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult
+    bytes::complete::{tag, take}, combinator::{not, opt}, multi::many0, sequence::{preceded, tuple}, IResult
 };
 
-use crate::parser::{annotation::{annotations0, Annotation}, identifier::{identifier, Identifier}, keyword::required_keyword, whitespace::wsc};
+use crate::parser::{whitespace::wsc};
 
 pub fn comma_separated0<T>(
     parser: impl Fn(&str) -> IResult<&str, T>,

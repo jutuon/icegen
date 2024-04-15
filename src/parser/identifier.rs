@@ -3,10 +3,8 @@ use core::fmt;
 
 use nom::{
     branch::alt,
-    bytes::complete::{is_not, tag, take_till, take_until, take_until1, take_while, take_while1},
-    character::{complete::{alpha1, multispace0, multispace1}, is_alphabetic},
-    combinator::{map, not, opt}, multi::many0,
-    sequence::{delimited, pair, preceded, tuple},
+    bytes::complete::{tag, take_while},
+    character::{complete::{alpha1}},
     IResult
 };
 

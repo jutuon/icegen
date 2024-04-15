@@ -1,9 +1,9 @@
 //! Parse Dart files
 
-use nom::{branch::alt, bytes::complete::take, multi::many0, IResult, Parser};
+use nom::{branch::alt, IResult, Parser};
 use anyhow::Result;
 
-use self::{class::{class}, import::{import_statement}, utils::item_parser, whitespace::wsc};
+use self::{class::{class}, import::{import_statement}, utils::item_parser};
 
 mod whitespace;
 mod keyword;
@@ -71,7 +71,7 @@ pub fn parse_file_contents(input: &str) -> IResult<&str, ParsedFile> {
 
 #[cfg(test)]
 mod tests {
-    use self::{annotation::Annotation, class::items::ClassItemInfo, identifier::Identifier};
+    use self::{class::items::ClassItemInfo, identifier::Identifier};
 
     use super::*;
 

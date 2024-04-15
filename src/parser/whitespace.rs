@@ -1,7 +1,7 @@
 
 
 use nom::{
-    branch::alt, bytes::complete::{tag, take_until}, character::complete::{multispace0, multispace1}, combinator::{map, opt}, multi::{many0, many1}, sequence::{delimited, pair, preceded, tuple}, IResult
+    branch::alt, bytes::complete::{tag, take_until}, character::complete::{multispace1}, multi::{many0}, sequence::{delimited}, IResult
 };
 
 pub const LINE_COMMENT_START : &str = "//";

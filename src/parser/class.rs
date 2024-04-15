@@ -4,12 +4,12 @@ pub mod items;
 pub mod named_parameters;
 
 use nom::{
-    branch::alt, bytes::complete::{is_not, tag, take, take_until, take_while}, character::complete::{multispace0, multispace1}, combinator::{map, opt}, multi::{count, many0}, sequence::{delimited, pair, preceded, tuple}, IResult
+    bytes::complete::{tag}, combinator::{opt}, sequence::{delimited}, IResult
 };
 
 use self::items::{class_item_info, ClassItemInfo};
 
-use super::{annotation::{annotations0, Annotation}, identifier::{identifier, Identifier}, keyword::{class_keyword, import_keyword, with_keyword}, literal::string_literal, utils::comma_separated1, whitespace::wsc};
+use super::{annotation::{annotations0, Annotation}, identifier::{identifier, Identifier}, keyword::{class_keyword, with_keyword}, utils::comma_separated1, whitespace::wsc};
 
 #[derive(Debug, PartialEq)]
 pub struct ClassDefinition {

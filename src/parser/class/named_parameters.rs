@@ -1,6 +1,6 @@
 
 use nom::{
-    branch::alt, bytes::complete::{is_not, tag, take, take_until, take_while}, character::complete::{multispace0, multispace1}, combinator::{map, not, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult
+    bytes::complete::{tag}, combinator::{opt}, IResult
 };
 
 use crate::parser::{annotation::{annotations0, Annotation}, data_type::{data_type, DataType}, identifier::{identifier, Identifier}, keyword::required_keyword, utils::comma_separated0, whitespace::wsc};

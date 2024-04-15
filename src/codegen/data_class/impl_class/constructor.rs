@@ -1,7 +1,7 @@
 use anyhow::Result;
 use indoc::formatdoc;
 
-use crate::{codegen::{data_class::ValidatedClass, utils::indent_lines}, parser::NamedParameter};
+use crate::{codegen::{data_class::ValidatedClass, utils::indent_lines}};
 
 pub fn generate_impl_class_constructor(class: &ValidatedClass) -> Result<String> {
     let const_keyword = if class.factory_constructor_is_const() {

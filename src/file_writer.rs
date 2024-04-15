@@ -1,12 +1,12 @@
 //! Update generated code files if needed
 
-use std::path::PathBuf;
-use std::{path::Path, str::Chars};
+
+
 use std::fs;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 
 use crate::codegen::{generate_data_class_file, GENERATED_FILE_HEADER};
-use crate::config::{self, ArgsConfig};
+use crate::config::{ArgsConfig};
 use crate::file_finder::{DartFile, ParsedDartFiles, FREEZED_GENERATED_CODE_FILE_EXTENSION_WITHOUT_LEADING_DOT};
 
 

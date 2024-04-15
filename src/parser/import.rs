@@ -1,6 +1,6 @@
 
 use nom::{
-    branch::alt, bytes::complete::{is_not, tag, take_until}, character::complete::{multispace0, multispace1}, combinator::{map, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult
+    bytes::complete::{tag, take_until}, IResult
 };
 
 use super::{keyword::import_keyword, literal::string_literal, whitespace::wsc};

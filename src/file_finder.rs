@@ -1,9 +1,9 @@
 //! Find and parse Dart files from a directory
 
 use std::path::PathBuf;
-use std::{path::Path, str::Chars};
+use std::{path::Path};
 use std::fs;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 
 use crate::parser::ParsedFile;
 

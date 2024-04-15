@@ -32,7 +32,7 @@ pub fn generate_impl_class_copy_with(class: &ValidatedClass) -> String {
 fn generate_field_params(class: &ValidatedClass) -> String {
     let mut fields = String::new();
 
-    for field in &class.factory_constructor_params {
+    for field in class.factory_constructor_params() {
         let default_value = if field.parameter_type.nullable {
             format!(" = {}", DEFAULT_DETECTOR_VARIABLE)
         } else {
@@ -52,7 +52,7 @@ fn generate_field_params(class: &ValidatedClass) -> String {
 fn generate_field_args(class: &ValidatedClass) -> String {
     let mut fields = String::new();
 
-    for field in &class.factory_constructor_params {
+    for field in class.factory_constructor_params() {
         let arg = if field.parameter_type.nullable {
             format!(
                 "{}: ({} == {} ? this.{} : {}) as {},\n",

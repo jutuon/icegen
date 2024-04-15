@@ -137,7 +137,7 @@ mod tests {
 
     fn factory_constructor(params: Vec<NamedParameter>) -> ClassItem {
         ClassItem::FactoryConstructor(
-            FactoryConstructor { params }
+            FactoryConstructor { params, is_const: false }
         )
     }
 
@@ -208,7 +208,13 @@ mod tests {
             class(
                 "class A { A._(); }"
             ),
-            Ok(("", c_with_items("A", vec![ClassItem::PrivateConstructor(PrivateConstructor)])))
+            Ok((
+                "",
+                c_with_items(
+                    "A",
+                    vec![ClassItem::PrivateConstructor(PrivateConstructor { is_const: false })],
+                )
+            ))
         );
     }
 
@@ -226,7 +232,7 @@ mod tests {
                 c_with_items(
                     "A",
                     vec![
-                        ClassItem::PrivateConstructor(PrivateConstructor),
+                        ClassItem::PrivateConstructor(PrivateConstructor { is_const: false }),
                     ],
                 )
             ))

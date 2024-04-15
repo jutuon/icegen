@@ -18,7 +18,7 @@ pub use copy_with::generate_detect_default_class_and_constant;
 
 pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Result<String> {
     let abstract_class_name = format!("_{}", class.name);
-    let class_modifier = if class.private_constructor_exists {
+    let class_modifier = if class.private_constructor_exists() {
         if file.flutter_foundation_import_exists {
             format!("extends {} with DiagnosticableTreeMixin", abstract_class_name)
         } else {

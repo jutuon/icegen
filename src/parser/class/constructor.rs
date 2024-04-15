@@ -3,16 +3,20 @@ use nom::{
     branch::alt, bytes::{complete::{is_not, tag, take_until, take_while}}, character::complete::{multispace0, multispace1}, combinator::{map, opt}, multi::many0, sequence::{delimited, pair, preceded, tuple}, IResult
 };
 
-use crate::parser::{identifier::{identifier, Identifier}, keyword::factory_keyword, whitespace::wsc};
+use crate::parser::{identifier::{identifier, Identifier}, keyword::{const_keyword, factory_keyword}, whitespace::wsc};
 
 use super::named_parameters::{named_parameters0, NamedParameter};
 
 /// Constructor like `ClassName._();`
-#[derive(Debug, PartialEq)]
-pub struct PrivateConstructor;
+#[derive(Debug, PartialEq, Clone)]
+pub struct PrivateConstructor {
+    pub is_const: bool,
+}
 
 
 pub fn private_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResult<&'a str, PrivateConstructor> {
+    let (input, is_const) = opt(const_keyword)(input)?;
+    let (input, _) = wsc(input)?;
     let (input, _) = tag(class_name.name.as_bytes())(input)?;
     let (input, _) = wsc(input)?;
     let (input, _) = tag(".")(input)?;
@@ -25,16 +29,19 @@ pub fn private_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResu
     let (input, _) = wsc(input)?;
     let (input, _) = tag(";")(input)?;
 
-    Ok((input, PrivateConstructor))
+    Ok((input, PrivateConstructor { is_const: is_const.is_some() }))
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FactoryConstructor {
     pub params: Vec<NamedParameter>,
+    pub is_const: bool,
 }
 
 
 pub fn factory_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResult<&'a str, FactoryConstructor> {
+    let (input, is_const) = opt(const_keyword)(input)?;
+    let (input, _) = wsc(input)?;
     let (input, _) = factory_keyword(input)?;
     let (input, _) = wsc(input)?;
     let (input, _) = tag(class_name.name.as_bytes())(input)?;
@@ -60,6 +67,7 @@ pub fn factory_constructor<'a>(class_name: &Identifier, input: &'a str) -> IResu
 
     Ok((input, FactoryConstructor {
         params,
+        is_const: is_const.is_some(),
     }))
 }
 
@@ -89,6 +97,24 @@ mod tests {
         }
     }
 
+    fn p(is_const: bool) -> PrivateConstructor {
+        PrivateConstructor { is_const }
+    }
+
+    fn f(params: impl AsRef<[NamedParameter]>) -> FactoryConstructor {
+        FactoryConstructor {
+            params: params.as_ref().to_vec(),
+            is_const: false,
+        }
+    }
+
+    fn f_with_is_const(params: impl AsRef<[NamedParameter]>, is_const: bool) -> FactoryConstructor {
+        FactoryConstructor {
+            params: params.as_ref().to_vec(),
+            is_const,
+        }
+    }
+
     #[test]
     fn private_constructor_parsed_correctly() {
         assert_eq!(
@@ -96,10 +122,20 @@ mod tests {
                 &identifier("A"),
                 "A . _ ( ) ; ",
             ),
-            Ok((" ", PrivateConstructor))
+            Ok((" ", p(false)))
         );
     }
 
+    #[test]
+    fn private_constructor_with_const_parsed_correctly() {
+        assert_eq!(
+            private_constructor(
+                &identifier("A"),
+                "const A . _ ( ) ; ",
+            ),
+            Ok((" ", p(true)))
+        );
+    }
 
     #[test]
     fn factory_constructor_no_params() {
@@ -110,7 +146,7 @@ mod tests {
             ),
             Ok((
                 "",
-                FactoryConstructor { params: vec![] }
+                f([])
             ))
         );
     }
@@ -124,9 +160,7 @@ mod tests {
             ),
             Ok((
                 "",
-                FactoryConstructor { params: vec![
-                    named_parameter("B", "b"),
-                ] }
+                f([named_parameter("B", "b"),])
             ))
         );
     }
@@ -140,10 +174,10 @@ mod tests {
             ),
             Ok((
                 "",
-                FactoryConstructor { params: vec![
+                f([
                     named_parameter("B", "b"),
                     named_parameter("C", "c"),
-                ] }
+                ])
             ))
         );
     }
@@ -159,9 +193,23 @@ mod tests {
             ),
             Ok((
                 "",
-                FactoryConstructor { params: vec![
+                f([
                     named_parameter("B", "b"),
-                ] }
+                ])
+            ))
+        );
+    }
+
+    #[test]
+    fn factory_constructor_with_const() {
+        assert_eq!(
+            factory_constructor(
+                &identifier("A"),
+                "const factory A ( {  } ) = _ ;"
+            ),
+            Ok((
+                "",
+                f_with_is_const([], true)
             ))
         );
     }

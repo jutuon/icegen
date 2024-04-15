@@ -4,7 +4,7 @@ use crate::codegen::{data_class::ValidatedClass, ValidatedFile};
 
 pub fn generate_impl_class_to_string(file: &ValidatedFile, class: &ValidatedClass) -> String {
     let mut fields = String::new();
-    for field in class.factory_constructor_params.iter() {
+    for field in class.factory_constructor_params() {
         fields.push_str(&format!(
             "{}: ${},",
             field.name,

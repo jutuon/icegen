@@ -9,7 +9,7 @@ pub fn generate_debug_fill_properties(file: &ValidatedFile, class: &ValidatedCla
     }
 
     let mut fields = String::new();
-    for field in class.factory_constructor_params.iter() {
+    for field in class.factory_constructor_params() {
         fields.push_str(&format!(
             "..add(DiagnosticsProperty('{}', {}))\n",
             field.name,

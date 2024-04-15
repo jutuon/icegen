@@ -36,7 +36,7 @@ pub fn generate_mixin(class: &ValidatedClass) -> Result<String> {
 fn generate_field_getters_for_mixin(class: &ValidatedClass, exception_identifier: &str) -> String {
     let mut field_getters = String::new();
 
-    for field in &class.factory_constructor_params {
+    for field in class.factory_constructor_params() {
         field_getters.push_str(&format!(
             "  {} get {} => throw {};\n",
             field.parameter_type,
@@ -64,7 +64,7 @@ fn validate_class_name(name: &Identifier) -> Result<()> {
 fn generate_copy_with_named_parameters(class: &ValidatedClass) -> String {
     let mut params = String::new();
 
-    for field in &class.factory_constructor_params {
+    for field in class.factory_constructor_params() {
         let nullable_type = field.parameter_type.to_nullable();
         params.push_str(&format!(
             "{} {},\n",

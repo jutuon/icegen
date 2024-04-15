@@ -11,8 +11,10 @@ pub enum Keyword {
     Factory,
     Required,
     With,
+    Const,
 }
 
+// TODO: Remove or update
 pub fn keyword(input: &str) -> IResult<&str, Keyword> {
     alt((
         import_keyword,
@@ -41,6 +43,10 @@ pub fn required_keyword(input: &str) -> IResult<&str, Keyword> {
 
 pub fn with_keyword(input: &str) -> IResult<&str, Keyword> {
     tag("with ")(input).map(|(input, _)| (input, Keyword::With))
+}
+
+pub fn const_keyword(input: &str) -> IResult<&str, Keyword> {
+    tag("const ")(input).map(|(input, _)| (input, Keyword::Const))
 }
 
 #[cfg(test)]

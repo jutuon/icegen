@@ -16,7 +16,7 @@ fn main() {
         }
     };
 
-    match file_writer::update_generated_code_for_parsed_files(parsed_files) {
+    match file_writer::update_generated_code_for_parsed_files(&config, parsed_files) {
         Ok(_) => (),
         Err(e) => eprintln!("Error: {}", e),
     }

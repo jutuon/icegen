@@ -9,6 +9,7 @@ pub fn generate_mixin(class: &ValidatedClass) -> Result<String> {
     validate_class_name(&class.name)?;
     let exception_identifier = format!("_privateConstructorError{}", class.name);
     let variable_for_exception = formatdoc!("
+        /// @nodoc
         final {} = UnsupportedError(
             'Private constructor {}._() was called. Please call factory constructor instead.');",
         exception_identifier,

@@ -6,10 +6,13 @@ const DEFAULT_DETECTOR_VARIABLE: &str = "_detectDefaultValueInCopyWith";
 
 pub fn generate_detect_default_class_and_constant() -> String {
     formatdoc!("
+        /// @nodoc
         class _DetectDefaultValueInCopyWith {{
           const _DetectDefaultValueInCopyWith();
         }}
-        const _DetectDefaultValueInCopyWith {} = _DetectDefaultValueInCopyWith();",
+
+        /// @nodoc
+        const {} = _DetectDefaultValueInCopyWith();",
         DEFAULT_DETECTOR_VARIABLE,
     )
 }

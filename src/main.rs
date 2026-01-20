@@ -1,5 +1,3 @@
-#[allow(clippy::collapsible_else_if)]
-
 pub mod codegen;
 pub mod config;
 pub mod file_finder;

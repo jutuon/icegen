@@ -26,15 +26,13 @@ pub fn generate_impl_class(file: &ValidatedFile, class: &ValidatedClass) -> Resu
         } else {
             format!("extends {}", abstract_class_name)
         }
+    } else if file.flutter_foundation_import_exists {
+        format!(
+            "with DiagnosticableTreeMixin implements {}",
+            abstract_class_name
+        )
     } else {
-        if file.flutter_foundation_import_exists {
-            format!(
-                "with DiagnosticableTreeMixin implements {}",
-                abstract_class_name
-            )
-        } else {
-            format!("implements {}", abstract_class_name)
-        }
+        format!("implements {}", abstract_class_name)
     };
 
     let debug_fill_properties = if file.flutter_foundation_import_exists {

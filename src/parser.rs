@@ -86,6 +86,7 @@ mod tests {
                 name: name.to_string(),
             },
             mixin_types: vec![],
+            implemented_types: vec![],
             item_info: ClassItemInfo { items: vec![] },
         })
     }

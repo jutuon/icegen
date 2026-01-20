@@ -7,6 +7,7 @@ pub enum Keyword {
     Factory,
     Required,
     With,
+    Implements,
     Const,
 }
 
@@ -30,6 +31,10 @@ pub fn required_keyword(input: &str) -> IResult<&str, Keyword> {
 
 pub fn with_keyword(input: &str) -> IResult<&str, Keyword> {
     tag("with ")(input).map(|(input, _)| (input, Keyword::With))
+}
+
+pub fn implements_keyword(input: &str) -> IResult<&str, Keyword> {
+    tag("implements ")(input).map(|(input, _)| (input, Keyword::Implements))
 }
 
 pub fn const_keyword(input: &str) -> IResult<&str, Keyword> {

@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::{arg, Parser};
+use clap::Parser;
 
 #[derive(Parser)]
 #[command(author, version, about)]
